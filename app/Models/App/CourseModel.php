@@ -74,7 +74,7 @@ class CourseModel extends Model
 
       foreach ($sections as $section) {
         
-        $section['contents'] = $this->db->table('contents')->select(['id','type','title','contentmedia','status'])
+        $section['contents'] = $this->db->table('contents')->select(['id','type','title','contentmedia', 'duration', 'status'])
         ->where('sectionid', $section['id'])->where('status', 'A')->get()->getResultArray();
         
         array_push($allSections, $section);
