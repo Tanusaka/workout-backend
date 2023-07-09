@@ -3,10 +3,10 @@
  *
  * @author Samu
  */
-namespace App\Controllers\App;
+namespace App\Controllers\App\Courses;
 
 use App\Controllers\Core\AuthController;
-use App\Models\App\SectionModel;
+use App\Models\App\Courses\SectionModel;
 
 class SectionController extends AuthController
 {
@@ -23,20 +23,20 @@ class SectionController extends AuthController
             $id = $this->request->getVar('id');
 
             if ( !isset($id) ) {
-                return $this->fail("Invalid Request", 400);
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
             $section = $this->sectionmodel->getSection($id);
 
             if ( is_null($section) ) {
-                return $this->failNotFound("Section cannot be found.");
+                return $this->respond($this->errorResponse(404,"Section cannot be found."), 404);
             }
 
-            return $this->respond($section, 200);
+            return $this->respond($this->successResponse(200, "", $section), 200);
 
         } catch (\Exception $e) {
             log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return $this->failServerError(API_MSG_ERROR_ISE);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
         }
     }
 
@@ -48,17 +48,17 @@ class SectionController extends AuthController
         
 			$section = [
 				'courseid'=> trim($this->request->getVar('courseid')), 
-				'title'=> trim($this->request->getVar('title')),
+				'sectionname'=> trim($this->request->getVar('sectionname')),
 			];
 
 			if ( !$this->sectionmodel->save_section($section) ) {
-				return $this->failServerError(API_MSG_ERROR_ISE);
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-			return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_SECTION_CREATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_CREATED), 200);
         
 		} else {
-            return $this->failValidationErrors($this->errors);
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
         }
 	}
 
@@ -73,23 +73,21 @@ class SectionController extends AuthController
             $section = $this->sectionmodel->getSection($sectionid);
 
             if ( is_null($section) ) {
-                return $this->failNotFound("Section cannot be found.");
+                return $this->respond($this->errorResponse(404,"Section cannot be found."), 404);
             }
 
 			$section = [
-				'courseid'=> trim($this->request->getVar('courseid')), 
-				'title'=> trim($this->request->getVar('title')),
-                'status'=> trim($this->request->getVar('status')),
+				'sectionname'=> trim($this->request->getVar('sectionname')),
 			];
 
 			if ( !$this->sectionmodel->update_section($section, $sectionid) ) {
-				return $this->failServerError(API_MSG_ERROR_ISE);
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-			return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_SECTION_UPDATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_UPDATED), 200);
         
 		} else {
-            return $this->failValidationErrors($this->errors);
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
         }
 	}
 
@@ -101,24 +99,20 @@ class SectionController extends AuthController
                     'label'  => 'Course',
                     'rules'  => 'required'
                 ],
-                'title' => [
-                    'label'  => 'Section Title',
-                    'rules'  => 'required|is_unique[sections.title]'
+                'sectionname' => [
+                    'label'  => 'Section Name',
+                    'rules'  => 'required|is_unique[course_sections.sectionname]'
 				]
             ]);
         } elseif ( $type == 'update' ) {
             $this->validation->setRules([
                 'sectionid' => [
-                    'label'  => 'Section ID',
+                    'label'  => 'Course Section ID',
                     'rules'  => 'required'
                 ],
-                'courseid' => [
-                    'label'  => 'Course',
-                    'rules'  => 'required'
-                ],
-                'title' => [
-                    'label'  => 'Section Title',
-                    'rules'  => 'required|is_unique[sections.title,id,{sectionid}]'
+                'sectionname' => [
+                    'label'  => 'Section Name',
+                    'rules'  => 'required|is_unique[course_sections.sectionname,id,{sectionid}]'
 				]
             ]);
         } else {

@@ -83,7 +83,7 @@ defined('EXIT__AUTO_MAX')      || define('EXIT__AUTO_MAX', 125); // highest auto
 
 
 
-defined('ER_MSG_INVALID_USERNAME_PASSWORD')  || define('ER_MSG_INVALID_USERNAME_PASSWORD', 'Invalid username or password.');
+defined('ER_MSG_INVALID_EMAIL_PASSWORD')     || define('ER_MSG_INVALID_EMAIL_PASSWORD', 'Invalid email or password.');
 defined('ER_MSG_USER_ACCOUNT_DISABLED')      || define('ER_MSG_USER_ACCOUNT_DISABLED', 'User account is disabled.');
 
 
@@ -109,15 +109,14 @@ defined('API_MSG_SUCCESS_SECTION_CREATED')   || define('API_MSG_SUCCESS_SECTION_
 defined('API_MSG_SUCCESS_SECTION_UPDATED')   || define('API_MSG_SUCCESS_SECTION_UPDATED', 'Section has been updated successfully.');
 defined('API_MSG_SUCCESS_SECTION_DELETED')   || define('API_MSG_SUCCESS_SECTION_DELETED', 'Section has been deleted successfully.');
 
-defined('API_MSG_SUCCESS_CONTENT_CREATED')   || define('API_MSG_SUCCESS_CONTENT_CREATED', 'Content has been created successfully.');
-defined('API_MSG_SUCCESS_CONTENT_UPDATED')   || define('API_MSG_SUCCESS_CONTENT_UPDATED', 'Content has been updated successfully.');
-defined('API_MSG_SUCCESS_CONTENT_DELETED')   || define('API_MSG_SUCCESS_CONTENT_DELETED', 'Content has been deleted successfully.');
+defined('API_MSG_SUCCESS_LESSON_CREATED')   || define('API_MSG_SUCCESS_LESSON_CREATED', 'Lesson has been created successfully.');
+defined('API_MSG_SUCCESS_LESSON_UPDATED')   || define('API_MSG_SUCCESS_LESSON_UPDATED', 'Lesson has been updated successfully.');
+defined('API_MSG_SUCCESS_LESSON_DELETED')   || define('API_MSG_SUCCESS_LESSON_DELETED', 'Lesson has been deleted successfully.');
+
+defined('API_MSG_SUCCESS_CHAT_CREATED')      || define('API_MSG_SUCCESS_CHAT_CREATED', 'Chat has been created successfully.');
 
 
-
-
-defined('API_MSG_ERROR_ISE')                 || define('API_MSG_ERROR_ISE', 'Internal Server Error.');
-defined('API_MSG_ERROR_TNF')                 || define('API_MSG_ERROR_TNF', 'Token Expired or Not Found.');
+defined('HTTP_500')                          || define('HTTP_500', 'Internal Server Error.');
 
 
 

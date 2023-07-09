@@ -3,14 +3,14 @@
  *
  * @author Samu
  */
-namespace App\Models\App;
+namespace App\Models\App\Courses;
 
 use CodeIgniter\Model;
 
-class ContentModel extends Model
+class LessonModel extends Model
 {
 
-  protected $table      = 'contents';
+  protected $table      = 'course_lessons';
   protected $primaryKey = 'id';
 
   protected $protectFields    = false;
@@ -40,30 +40,29 @@ class ContentModel extends Model
     return $data;
   }
 
-  public function getContent($id=0)
+  public function getLesson($id=0)
   {
     try {
-      $selectColumns = ['id','sectionid','type','title','contentmedia','duration','status'];
+      $selectColumns = ['id', 'sectionid', 'lessonname', 'lessonmediapath', 'lessondescription', 'lessonduration', 'status'];
       return $this->select($selectColumns)->where('id', $id)->first();
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function save_content($data=[])
+  public function saveLesson($data=[])
   {
     return is_null($data) ? false : ( $this->insert($data) ? true : false );
   }
 
-  public function update_content($data=[], $id=null)
+  public function updateLesson($data=[], $id=null)
   {
     if ( is_null($data) ) { return false; }
 
-    if ( isset($data['sectionid']) ) { $this->set('sectionid', $data['sectionid']); }
-    if ( isset($data['type']) ) { $this->set('type', $data['type']); }
-    if ( isset($data['title']) ) { $this->set('title', $data['title']); }
-    if ( isset($data['contentmedia']) ) { $this->set('contentmedia', $data['contentmedia']); }
-    if ( isset($data['duration']) ) { $this->set('duration', $data['duration']); }
+    if ( isset($data['lessonname']) ) { $this->set('lessonname', $data['lessonname']); }
+    if ( isset($data['lessonmediapath']) ) { $this->set('lessonmediapath', $data['lessonmediapath']); }
+    if ( isset($data['lessondescription']) ) { $this->set('lessondescription', $data['lessondescription']); }
+    if ( isset($data['lessonduration']) ) { $this->set('lessonduration', $data['lessonduration']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

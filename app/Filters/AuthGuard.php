@@ -32,26 +32,35 @@ class AuthGuard implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $token = Auth::getHeaderJWT();
-  
-        // check if token is null or empty
-        if(is_null($token) || empty($token)) {
-            return self::getResponse(404);
-        }
-  
         try {
-            #check is token expired
-            if ( Auth::isTokenExpired() ) {
-                return self::getResponse(404);
+            #check header has a token
+            if( !Auth::hasToken() ) {
+                return Auth::getResponse(404);
             }
 
-            #check permissions granted
-            if ( isset($arguments[0]) && !Auth::allows($arguments[0]) ) {
-                return self::getResponse(403);
+            #check is token expired
+            if ( Auth::isTokenExpired() ) {
+                return Auth::getResponse(401);
             }
+
+            #check is user logged in and has permissions to access
+            if ( !Auth::check() ) {
+                return Auth::getResponse(403);
+            }
+
+            #check access token is matched with logged in user token
+            if ( !Auth::isTokenMatched() ) {
+                return Auth::getResponse(401);
+            }
+
+            #check user has permissions to access
+            if (  isset($arguments[0]) && !Auth::allows($arguments[0]) ) {
+                return Auth::getResponse(403);
+            }
+
         } catch (\Exception $e) {
             log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return self::getResponse(500);
+            return Auth::getResponse(500);
         }
     }
   
@@ -72,24 +81,4 @@ class AuthGuard implements FilterInterface
 
     }
 
-    private static function getResponse($response_code=500)
-    {
-        $response = service('response');
-
-        if ( $response_code==401 ) {
-            $response->setStatusCode(401);
-            $response->setJson(['status' => '401', 'messages' => ['error' => 'Access Denied.']]);
-        } else if ($response_code==403) {
-            $response->setStatusCode(403);
-            $response->setJson(['status' => '403', 'messages' => ['error' => 'Permission Denied.']]);
-        } else if ($response_code==404) {
-            $response->setStatusCode(404);
-            $response->setJson(['status' => '404', 'messages' => ['error' => 'Token Expired or Not Found.']]);
-        } else {
-            $response->setStatusCode(500);
-            $response->setJson(['status' => '500', 'messages' => ['error' => 'Internal Server Error.']]);
-        }
-
-        return $response;
-    }
 }

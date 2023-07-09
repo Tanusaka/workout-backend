@@ -3,14 +3,14 @@
  *
  * @author Samu
  */
-namespace App\Models\App;
+namespace App\Models\App\Courses;
 
 use CodeIgniter\Model;
 
 class SectionModel extends Model
 {
 
-  protected $table      = 'sections';
+  protected $table      = 'course_sections';
   protected $primaryKey = 'id';
 
   protected $protectFields    = false;
@@ -43,7 +43,7 @@ class SectionModel extends Model
   public function getSection($id=0)
   {
     try {
-      $selectColumns = ['id','courseid','title','status'];
+      $selectColumns = ['id', 'courseid', 'sectionname',' status'];
       return $this->select($selectColumns)->where('id', $id)->first();
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
@@ -59,8 +59,7 @@ class SectionModel extends Model
   {
     if ( is_null($data) ) { return false; }
 
-    if ( isset($data['courseid']) ) { $this->set('courseid', $data['courseid']); }
-    if ( isset($data['title']) ) { $this->set('title', $data['title']); }
+    if ( isset($data['sectionname']) ) { $this->set('sectionname', $data['sectionname']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

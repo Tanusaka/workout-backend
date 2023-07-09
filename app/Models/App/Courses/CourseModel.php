@@ -3,7 +3,7 @@
  *
  * @author Samu
  */
-namespace App\Models\App;
+namespace App\Models\App\Courses;
 
 use CodeIgniter\Model;
 
@@ -42,7 +42,7 @@ class CourseModel extends Model
 
   public function getCourses($status='')
   {
-    $selectColumns = ['id','prid','type','title','subtitle','level','description', 'covermediatype', 'covermedia','status'];
+    $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status'];
 
     if ($status=='') {
       return $this->select($selectColumns)->findAll();
@@ -54,7 +54,7 @@ class CourseModel extends Model
   public function getCourse($id=0, $format='ALL')
   {
     try {
-      $selectColumns = ['id','prid','type','title','subtitle','level','description', 'covermediatype', 'covermedia','status'];
+      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status'];
   
       $course = $this->select($selectColumns)->where('id', $id)->first();
 
@@ -66,7 +66,7 @@ class CourseModel extends Model
         return $course;
       }
 
-      $sections = $this->db->table('sections')->select(['id','title','status'])
+      $sections = $this->db->table('course_sections')->select(['id', 'courseid', 'sectionname','status'])
       ->where('courseid', $course['id'])->where('status', 'A')
       ->orderBy('id', 'ASC')->get()->getResultArray();
 
@@ -74,7 +74,7 @@ class CourseModel extends Model
 
       foreach ($sections as $section) {
         
-        $section['contents'] = $this->db->table('contents')->select(['id','type','title','contentmedia', 'duration', 'status'])
+        $section['lessons'] = $this->db->table('course_lessons')->select(['id', 'sectionid', 'lessonname', 'lessonmediapath', 'lessondescription', 'lessonduration', 'status'])
         ->where('sectionid', $section['id'])->where('status', 'A')->get()->getResultArray();
         
         array_push($allSections, $section);
@@ -98,13 +98,11 @@ class CourseModel extends Model
   {
     if ( is_null($data) ) { return false; }
 
-    if ( isset($data['type']) ) { $this->set('type', $data['type']); }
-    if ( isset($data['title']) ) { $this->set('title', $data['title']); }
-    if ( isset($data['subtitle']) ) { $this->set('subtitle', $data['subtitle']); }
-    if ( isset($data['level']) ) { $this->set('level', $data['level']); }
-    if ( isset($data['description']) ) { $this->set('description', $data['description']); }
-    if ( isset($data['covermediatype']) ) { $this->set('covermediatype', $data['covermediatype']); }
-    if ( isset($data['covermedia']) ) { $this->set('covermedia', $data['covermedia']); }
+    if ( isset($data['coursetype']) ) { $this->set('coursetype', $data['coursetype']); }
+    if ( isset($data['coursename']) ) { $this->set('coursename', $data['coursename']); }
+    if ( isset($data['courseintro']) ) { $this->set('courseintro', $data['courseintro']); }
+    if ( isset($data['coursedescription']) ) { $this->set('coursedescription', $data['coursedescription']); }
+    if ( isset($data['coursemediapath']) ) { $this->set('coursemediapath', $data['coursemediapath']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

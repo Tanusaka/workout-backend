@@ -42,6 +42,7 @@ $routes->post('/auth/login', 'Core/AuthController::login');
 $routes->post('/auth/signup', 'Core/AuthController::signup');
 $routes->post('/auth/logout', 'Core/AuthController::logout');
 $routes->post('/auth/permissions', 'Core/AuthController::permissions');
+$routes->post('/auth/refreshtokens', 'Core/AuthController::refreshtokens');
 
 /*
  * --------------------------------------------------------------------
@@ -54,18 +55,23 @@ $routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:use
  * --------------------------------------------------------------------
  * Course Routing
  * --------------------------------------------------------------------*/
-$routes->get('/courses', 'App/CourseController::index', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/get', 'App/CourseController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/save', 'App/CourseController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/update', 'App/CourseController::update', ['filter' => 'authguard:courses-w']);
+$routes->get('/courses', 'App/Courses/CourseController::index', ['filter' => 'authguard:courses-r']);
 
-$routes->post('/courses/sections/get', 'App/SectionController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/save', 'App/SectionController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/update', 'App/SectionController::update', ['filter' => 'authguard:courses-w']);
+$routes->post('/courses/get', 'App/Courses/CourseController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/save', 'App/Courses/CourseController::save', ['filter' => 'authguard:courses-w']);
+$routes->post('/courses/update', 'App/Courses/CourseController::update', ['filter' => 'authguard:courses-w']);
 
-$routes->post('/courses/sections/contents/get', 'App/ContentController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/contents/save', 'App/ContentController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/contents/update', 'App/ContentController::update', ['filter' => 'authguard:courses-w']);
+$routes->post('/courses/sections/get', 'App/Courses/SectionController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/sections/save', 'App/Courses/SectionController::save', ['filter' => 'authguard:courses-w']);
+$routes->post('/courses/sections/update', 'App/Courses/SectionController::update', ['filter' => 'authguard:courses-w']);
+
+$routes->post('/courses/sections/lessons/get', 'App/Courses/LessonController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/sections/lessons/save', 'App/Courses/LessonController::save', ['filter' => 'authguard:courses-w']);
+$routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController::update', ['filter' => 'authguard:courses-w']);
+
+
+
+// $routes->post('/apps/chats/create', 'App/ChatController::save');
 
 
 /*

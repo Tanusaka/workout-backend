@@ -27,58 +27,36 @@ class AuthController extends BaseController
 		if ( $this->isValid() ) {	
 			
 			$credentials = [
-				'username' => trim($this->request->getVar('username')),
+				'email' => trim($this->request->getVar('email')),
 				'password' => trim($this->request->getVar('password'))
 			];
-	
-			if ( Auth::attempt($credentials) ) {
 
-				$token = Auth::getJWT($credentials['username']);
-				$refreshtoken = Auth::getRefreshJWT($credentials['username']);
+			try {
+				if ( Auth::attempt($credentials) ) {
+					
+					$tokens = Auth::getTokens($credentials['email']);
+					
+					// $this->response->setCookie( Auth::getRefreshCookie($tokens['refreshToken']) );
 
-				//Auth::updateToken($refreshtoken);
-
-				$cookie = [
-					'name'     => 'refjwt',
-					'value'    => $refreshtoken,
-					'expire'   => '86500',
-					'domain'   => '',
-					'path'     => '/',
-					'prefix'   => 'api_',
-					'secure'   => false,
-					'httponly' => true,
-					'samesite' => 'Lax',
-				];
+					
+					$this->response->setJSON( [ 
+						'token' => $tokens['accessToken'],
+						'rtoken' => $tokens['refreshToken']
+					] );
+					
+					return $this->response;
 				
-				$this->response->setCookie($cookie);
-				$this->response->setJSON( [ 'token' => $token ] );
-				
-				return $this->response;
-
-			} else {
-				return $this->failUnauthorized(ER_MSG_INVALID_USERNAME_PASSWORD);
+				} else {
+					return $this->failUnauthorized(ER_MSG_INVALID_EMAIL_PASSWORD);
+				}
+			} catch (\Exception $e) {
+				log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+				return $this->failServerError(HTTP_500);
 			}
 			
 		} else {
 			return $this->failValidationErrors($this->errors);
 		}		
-	}
-
-	public function permissions()
-	{
-		try {
-
-			return $this->respond(Auth::getPermissions(), 200);
-
-		} catch (\Exception $e) {
-			log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-			
-			if ($e->getMessage() == "TOKEN404") {
-				return $this->failNotFound(API_MSG_ERROR_TNF);
-			} 
-
-			return $this->failServerError(API_MSG_ERROR_ISE);
-		}
 	}
 
 	public function signup()
@@ -88,12 +66,12 @@ class AuthController extends BaseController
         if ( $this->isValid() ) {           
         
 			$user = [
-				'username'=> trim($this->request->getVar('username')), 
+				'email'=> trim($this->request->getVar('email')), 
 				'password'=> trim($this->request->getVar('password'))
 			];
 
 			if ( !Auth::register($user) ) {
-				return $this->failServerError(API_MSG_ERROR_ISE);
+				return $this->failServerError(HTTP_500);
 			}
 
 			return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_USER_CREATED), 200);
@@ -106,29 +84,58 @@ class AuthController extends BaseController
 	public function logout()
 	{
 		try {
-			if ( Auth::logout() ) {
-				return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_LOGOUT), 200);
-			} else {
-				return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_LOGOUT_ALREADY), 200);
-			}	
-		} catch (\Exception $e) {
-			log_message('error', '[ERROR] {exception}', ['exception' => $e]);
 			
-			if ($e->getMessage() == "TOKEN404") {
-				return $this->failNotFound(API_MSG_ERROR_TNF);
+			if ( !Auth::logout() ) {
+				return $this->failServerError(HTTP_500);
 			} 
 
-			return $this->failServerError(API_MSG_ERROR_ISE);
+			return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_LOGOUT), 200);
+
+		} catch (\Exception $e) {
+			log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+			return Auth::getResponse($e->getMessage());
 		}
+	}
+
+	public function permissions()
+	{
+		try {
+			return $this->respond(Auth::getPermissions(), 200);
+		} catch (\Exception $e) {
+			log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+			return Auth::getResponse($e->getMessage());
+		}
+	}
+
+	public function refreshtokens()
+	{
+		try {
+
+			$tokens = Auth::getRefreshTokens();
+					
+			$this->response->setCookie( Auth::getRefreshCookie($tokens['refreshToken']) );
+			$this->response->setJSON( [ 'token' => $tokens['accessToken'] ] );
+			
+			return $this->response;
+
+		} catch (\Exception $e) {
+			log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+			return Auth::getResponse($e->getMessage());
+		}
+	}
+
+	public function getAuthTenantID()
+	{
+		# code...
 	}
 
 	private function setValidationRules($type='')
     {
         if ( $type == 'signup' ) {
             $this->validation->setRules([
-                'username' => [
+                'email' => [
                   'label'  => 'Email',
-                  'rules'  => 'required|valid_email|is_unique[_auths.username]'
+                  'rules'  => 'required|valid_email|is_unique[_auths.email]'
                 ],
                 'password' => [
                   'label'  => 'Password',
@@ -141,7 +148,7 @@ class AuthController extends BaseController
             ]);
         } else if ( $type == 'login' ) { 
             $this->validation->setRules([
-				'username' => [
+				'email' => [
 					'label'  => 'Email',
 					'rules'  => 'required|valid_email'
 				],

@@ -46,9 +46,9 @@ class AuthModel extends Model
     return $data;
   }
 
-  public function getAuth($username=null)
+  public function getAuth($email=null)
   {
-    return $this->where('username', $username)->first();
+    return $this->where('email', $email)->first();
   }
 
   public function isAuthActive($id=0)
@@ -60,53 +60,81 @@ class AuthModel extends Model
     }
   }
 
-  public function isLoggedin($username=null)
+  public function isLoggedin($email=null)
   {
     try {
-      return $this->getAuth($username)['islogged'] ? true : false;
+      return $this->getAuth($email)['islogged'] ? true : false;
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function getAuthID($username=null)
+  public function getAuthID($email=null)
   {
     try {
-      return $this->getAuth($username)['id'];
+      return $this->getAuth($email)['id'];
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function getRtID($username=null)
+  public function getRtID($email=null)
   {
     try {
-      return $this->getAuth($username)['rtid'];
+      return $this->getAuth($email)['rtid'];
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function updateLogin($username=null)
+  public function getAccessToken($email=null)
   {
-    return $this->set('islogged', 1)->set('lastinat', date('Y-m-d H:i:s'))->where('username', $username)->update();
+    try {
+      return $this->getAuth($email)['atoken'];
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
   }
 
-  public function updateLogout($username=null)
+  public function getRefreshToken($email=null)
   {
-    return $this->set('islogged', 0)->set('lastoutat', date('Y-m-d H:i:s'))->where('username', $username)->update();
+    try {
+      return $this->getAuth($email)['rtoken'];
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
   }
 
-  public function getAllPermissions($authid=null)
+  public function updateTokens($tokens=[], $email=null)
+  {
+    try {
+      return $this->set('atoken', $tokens['accessToken'])->set('rtoken', $tokens['refreshToken'])->where('email', $email)->update();
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
+  public function updateLogin($email=null)
+  {
+    return $this->set('islogged', 1)->set('lastinat', date('Y-m-d H:i:s'))->where('email', $email)->update();
+  }
+
+  public function updateLogout($email=null)
+  {
+    return $this->set('islogged', 0)->set('atoken', NULL)->set('rtoken', NULL)->set('lastoutat', date('Y-m-d H:i:s'))->where('email', $email)->update();
+  }
+
+  public function getAllPermissions($email=null)
   {
     try {
       $parray = [];
 
       $permissions = 
-      $this->db->table('_privileges')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_auths', '_auths.rtid = _privileges.rtid')
-      ->join('_permissions', '_permissions.id = _privileges.pmid')
-      ->where('_auths.id', $authid)
+      $this->db->table('_tenantpermissions')->select(['permissionname','r_access','w_access','d_access'])
+      ->join('_tenantroles', '_tenantroles.id = _tenantpermissions.trid')
+      ->join('_auths', '_auths.tenantroleid = _tenantroles.id')
+      ->join('_permissions', '_permissions.id = _tenantpermissions.pmid')
+      ->where('_auths.id', $this->getAuthID($email))
       ->get()->getResultArray();
 
       foreach ($permissions as $p) {
@@ -121,16 +149,17 @@ class AuthModel extends Model
     }
   }
 
-  public function getGuardPermissions($authid=null, $guard=null)
+  public function getGuardPermissions($email=null, $guard=null)
   {
     try {
       $parray = [];
 
       $permissions = 
-      $this->db->table('_privileges')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_auths', '_auths.rtid = _privileges.rtid')
-      ->join('_permissions', '_permissions.id = _privileges.pmid')
-      ->where('_auths.id', $authid)->where('_permissions.permissionname', $guard)
+      $this->db->table('_tenantpermissions')->select(['permissionname','r_access','w_access','d_access'])
+      ->join('_tenantroles', '_tenantroles.id = _tenantpermissions.trid')
+      ->join('_auths', '_auths.tenantroleid = _tenantroles.id')
+      ->join('_permissions', '_permissions.id = _tenantpermissions.pmid')
+      ->where('_auths.id', $this->getAuthID($email))->where('_permissions.permissionname', $guard)
       ->get()->getRowArray();
 
       if ( !is_null($permissions) ) {

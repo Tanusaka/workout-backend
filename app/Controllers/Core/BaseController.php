@@ -80,6 +80,23 @@ class BaseController extends Controller
             ];
     }
 
+    public function successResponse($status='200', $messages='', $data=[])
+    {
+        return [
+            'status' => $status,
+            'messages' => $messages,
+            'data' => $data
+        ];
+    }
+
+    public function errorResponse($status='404', $messages='', $data=[])
+    {
+        return [
+            'status' => $status,
+            'messages' => $messages
+        ];
+    }
+
     protected function isValid()
     {
         $this->validation->withRequest($this->request)->run();
