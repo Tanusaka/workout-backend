@@ -12,7 +12,7 @@ use CodeIgniter\I18n\Time;
 class AuthModel extends Model
 {
 
-  protected $table      = '_auths';
+  protected $table      = '_tenantusers';
   protected $primaryKey = 'id';
 
   protected $protectFields    = false;
@@ -46,9 +46,10 @@ class AuthModel extends Model
     return $data;
   }
 
-  public function getAuth($email=null)
+  public function getAuth($email=null, $tenantid=1)
   {
-    return $this->where('email', $email)->first();
+    //replace tenantid=1 later with real tenant id
+    return $this->where('tenantid', $tenantid)->where('email', $email)->first();
   }
 
   public function isAuthActive($id=0)
@@ -124,17 +125,16 @@ class AuthModel extends Model
     return $this->set('islogged', 0)->set('atoken', NULL)->set('rtoken', NULL)->set('lastoutat', date('Y-m-d H:i:s'))->where('email', $email)->update();
   }
 
-  public function getAllPermissions($email=null)
+  public function getAllPermissions($email=null, $tenantid=1)
   {
     try {
       $parray = [];
 
       $permissions = 
-      $this->db->table('_tenantpermissions')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_tenantroles', '_tenantroles.id = _tenantpermissions.trid')
-      ->join('_auths', '_auths.tenantroleid = _tenantroles.id')
-      ->join('_permissions', '_permissions.id = _tenantpermissions.pmid')
-      ->where('_auths.id', $this->getAuthID($email))
+      $this->db->table('_tenantrolepermissions')->select(['permissionname','r_access','w_access','d_access'])
+      ->join('_tenantusers', '_tenantusers.tenantroleid = _tenantrolepermissions.trid')
+      ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
+      ->where('_tenantusers.id', $this->getAuthID($email))
       ->get()->getResultArray();
 
       foreach ($permissions as $p) {
@@ -155,11 +155,10 @@ class AuthModel extends Model
       $parray = [];
 
       $permissions = 
-      $this->db->table('_tenantpermissions')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_tenantroles', '_tenantroles.id = _tenantpermissions.trid')
-      ->join('_auths', '_auths.tenantroleid = _tenantroles.id')
-      ->join('_permissions', '_permissions.id = _tenantpermissions.pmid')
-      ->where('_auths.id', $this->getAuthID($email))->where('_permissions.permissionname', $guard)
+      $this->db->table('_tenantrolepermissions')->select(['permissionname','r_access','w_access','d_access'])
+      ->join('_tenantusers', '_tenantusers.tenantroleid = _tenantrolepermissions.trid')
+      ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
+      ->where('_tenantusers.id', $this->getAuthID($email))->where('_permissions.permissionname', $guard)
       ->get()->getRowArray();
 
       if ( !is_null($permissions) ) {
@@ -176,7 +175,7 @@ class AuthModel extends Model
 
   public function saveToken($data=[])
   {
-    return is_null($data) ? false : ( $this->db->table('_refreshtokens')->insert($data) ? true : false );
+    return is_null($data) ? false : ( $this->db->table('_tenanttokens')->insert($data) ? true : false );
   }
   
 }

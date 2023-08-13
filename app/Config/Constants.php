@@ -101,6 +101,12 @@ defined('API_MSG_SUCCESS_USER_UPDATED')      || define('API_MSG_SUCCESS_USER_UPD
 defined('API_MSG_SUCCESS_USER_DELETED')      || define('API_MSG_SUCCESS_USER_DELETED', 'User has been deleted successfully.');
 
 
+defined('API_MSG_SUCCESS_ROLE_PERMISSIONS_UPDATED')     || define('API_MSG_SUCCESS_ROLE_PERMISSIONS_UPDATED', 'Role permissions has been updated successfully.');
+
+
+
+
+
 defined('API_MSG_SUCCESS_COURSE_CREATED')    || define('API_MSG_SUCCESS_COURSE_CREATED', 'Course has been created successfully.');
 defined('API_MSG_SUCCESS_COURSE_UPDATED')    || define('API_MSG_SUCCESS_COURSE_UPDATED', 'Course has been updated successfully.');
 defined('API_MSG_SUCCESS_COURSE_DELETED')    || define('API_MSG_SUCCESS_COURSE_DELETED', 'Course has been deleted successfully.');

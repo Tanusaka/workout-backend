@@ -46,9 +46,15 @@ $routes->post('/auth/refreshtokens', 'Core/AuthController::refreshtokens');
 
 /*
  * --------------------------------------------------------------------
- * User Routing
+ * User Management Routing
  * --------------------------------------------------------------------*/
 $routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:users-r']);
+$routes->post('/users/get', 'Core/UserController::get', ['filter' => 'authguard:users-r']);
+$routes->post('/users/save', 'Core/UserController::save', ['filter' => 'authguard:users-w']);
+
+$routes->get('/roles', 'Core/RoleController::index');
+$routes->post('/roles/get', 'Core/RoleController::get', ['filter' => 'authguard:roles-r']);
+$routes->post('/roles/permissions/update', 'Core/RoleController::updatePermissions', ['filter' => 'authguard:roles-w']);
 
 
 /*

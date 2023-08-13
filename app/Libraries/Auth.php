@@ -132,6 +132,15 @@ class Auth {
         }
     }
 
+    public static function tenantid()
+    {
+        try {
+            return self::getPayLoad()->tenantid;
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public static function check()
     {
         return static::$authmodel->isLoggedin(self::email());
@@ -263,6 +272,7 @@ class Auth {
 			"sub" => getenv('jwt.sub'),
 			"iat" => $iat, //Time the JWT issued at
 			"exp" => $exp, // Expiration time of token
+            "tenantid" => 1,
 			"email" => $email,
 		);
 		
@@ -278,7 +288,8 @@ class Auth {
         $payload = array(
 			"iat" => $iat, //Time the JWT issued at
 			"exp" => $exp, // Expiration time of token
-			"email" => $email,
+			"tenantid" => 1,
+            "email" => $email,
 		);
 		
 		return JWT::encode($payload, getenv('jwt.refresh_secret'), 'HS256');
