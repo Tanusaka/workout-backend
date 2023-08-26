@@ -81,7 +81,7 @@ class CourseController extends AuthController
 			
             $extcourse = $this->coursemodel->getCourse($courseid, 'COURSE_ONLY');
 
-            if ( is_null($extcourse) ) {
+            if ( empty($extcourse) ) {
                 return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
             }
 
@@ -108,14 +108,27 @@ class CourseController extends AuthController
     {
         if ( $type == 'save' ) {
             $this->validation->setRules([
-                'coursetype' => [
-                    'label'  => 'Course Type',
+                'coursemediapath' => [
+                    'label'  => 'Course Cover Image',
                     'rules'  => 'required'
                 ],
                 'coursename' => [
                     'label'  => 'Course Name',
                     'rules'  => 'required|is_unique[courses.coursename]'
-				]
+				],
+                'courseintro' => [
+                    'label'  => 'Course Intro',
+                    'rules'  => 'required'
+				],
+                'coursetype' => [
+                    'label'  => 'Course Type',
+                    'rules'  => 'required'
+                ],
+                'coursedescription' => [
+                    'label'  => 'Course Description',
+                    'rules'  => 'required'
+                ],
+                
             ]);
         } elseif ( $type == 'update' ) {
             $this->validation->setRules([

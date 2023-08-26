@@ -19,7 +19,10 @@ class RoleController extends AuthController
 
     public function index()
     {
-        return $this->respond($this->successResponse(200, "", $this->rolemodel->getRoles()), 200);
+        $exclude = [
+            'id' => $this->getAuthRoleID()
+        ];
+        return $this->respond($this->successResponse(200, "", $this->rolemodel->getRoles($exclude)), 200);
     }
 
     public function get()
@@ -28,6 +31,10 @@ class RoleController extends AuthController
             $roleid = $this->request->getVar('roleid');
 
             if ( !isset($roleid) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            if ( $roleid == $this->getAuthRoleID() ) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
@@ -54,6 +61,10 @@ class RoleController extends AuthController
 
             if ( empty($extpermission) ) {
                 return $this->respond($this->errorResponse(404,"Permission cannot be found."), 404);
+            }
+
+            if ( $extpermission[0]->rid == $this->getAuthRoleID() ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
 			if ( !$this->rolemodel->update_permission($mode, $access, $permissionid) ) {

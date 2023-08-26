@@ -12,7 +12,7 @@ use CodeIgniter\I18n\Time;
 class AuthModel extends Model
 {
 
-  protected $table      = '_tenantusers';
+  protected $table      = '_users';
   protected $primaryKey = 'id';
 
   protected $protectFields    = false;
@@ -46,11 +46,16 @@ class AuthModel extends Model
     return $data;
   }
 
-  public function getAuth($email=null, $tenantid=1)
+  public function getAuth($email=null)
   {
-    //replace tenantid=1 later with real tenant id
-    return $this->where('tenantid', $tenantid)->where('email', $email)->first();
+    return $this->where('email', $email)->first();
   }
+
+  // public function getAuth($email=null, $tenantid=1)
+  // {
+  //   //replace tenantid=1 later with real tenant id
+  //   return $this->where('tenantid', $tenantid)->where('email', $email)->first();
+  // }
 
   public function isAuthActive($id=0)
   {
@@ -82,7 +87,7 @@ class AuthModel extends Model
   public function getRtID($email=null)
   {
     try {
-      return $this->getAuth($email)['rtid'];
+      return $this->getAuth($email)['roleid'];
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
@@ -131,15 +136,15 @@ class AuthModel extends Model
       $parray = [];
 
       $permissions = 
-      $this->db->table('_tenantrolepermissions')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_tenantusers', '_tenantusers.tenantroleid = _tenantrolepermissions.trid')
-      ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
-      ->where('_tenantusers.id', $this->getAuthID($email))
+      $this->db->table('_rolepermissions')->select(['permissioncode','r_access','w_access','d_access'])
+      ->join('_users', '_users.roleid = _rolepermissions.rid')
+      ->join('_permissions', '_permissions.id = _rolepermissions.pid')
+      ->where('_users.id', $this->getAuthID($email))
       ->get()->getResultArray();
 
       foreach ($permissions as $p) {
         $access = [ 'read' => $p['r_access'], 'write' => $p['w_access'], 'delete' => $p['d_access'] ];
-        $parray[$p['permissionname']] = $access;
+        $parray[$p['permissioncode']] = $access;
       }
 
       return json_decode(json_encode($parray));
@@ -155,10 +160,10 @@ class AuthModel extends Model
       $parray = [];
 
       $permissions = 
-      $this->db->table('_tenantrolepermissions')->select(['permissionname','r_access','w_access','d_access'])
-      ->join('_tenantusers', '_tenantusers.tenantroleid = _tenantrolepermissions.trid')
-      ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
-      ->where('_tenantusers.id', $this->getAuthID($email))->where('_permissions.permissionname', $guard)
+      $this->db->table('_rolepermissions')->select(['permissioncode','r_access','w_access','d_access'])
+      ->join('_users', '_users.roleid = _rolepermissions.rid')
+      ->join('_permissions', '_permissions.id = _rolepermissions.pid')
+      ->where('_users.id', $this->getAuthID($email))->where('_permissions.permissioncode', $guard)
       ->get()->getRowArray();
 
       if ( !is_null($permissions) ) {
@@ -175,7 +180,7 @@ class AuthModel extends Model
 
   public function saveToken($data=[])
   {
-    return is_null($data) ? false : ( $this->db->table('_tenanttokens')->insert($data) ? true : false );
+    return is_null($data) ? false : ( $this->db->table('_tokens')->insert($data) ? true : false );
   }
   
 }

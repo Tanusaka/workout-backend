@@ -51,10 +51,23 @@ $routes->post('/auth/refreshtokens', 'Core/AuthController::refreshtokens');
 $routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:users-r']);
 $routes->post('/users/get', 'Core/UserController::get', ['filter' => 'authguard:users-r']);
 $routes->post('/users/save', 'Core/UserController::save', ['filter' => 'authguard:users-w']);
+$routes->post('/users/update', 'Core/UserController::update', ['filter' => 'authguard:users-w']);
+$routes->post('/users/update/password', 'Core/UserController::update_password', ['filter' => 'authguard:users-w']);
+$routes->post('/users/update/role', 'Core/UserController::update_role', ['filter' => 'authguard:users-w']);
 
 $routes->get('/roles', 'Core/RoleController::index');
 $routes->post('/roles/get', 'Core/RoleController::get', ['filter' => 'authguard:roles-r']);
 $routes->post('/roles/permissions/update', 'Core/RoleController::updatePermissions', ['filter' => 'authguard:roles-w']);
+
+/*
+ * --------------------------------------------------------------------
+ * Linked Profile Routing
+ * --------------------------------------------------------------------*/
+$routes->post('/linkedprofiles/get', 'App/Linkedprofile/LinkedprofileController::get', ['filter' => 'authguard:users-r']);
+$routes->post('/linkedprofiles/get/users', 'App/Linkedprofile/LinkedprofileController::getUsersForLink', ['filter' => 'authguard:users-r']);
+$routes->post('/linkedprofiles/save', 'App/Linkedprofile/LinkedprofileController::save', ['filter' => 'authguard:users-w']);
+$routes->post('/linkedprofiles/delete', 'App/Linkedprofile/LinkedprofileController::delete', ['filter' => 'authguard:users-w']);
+
 
 
 /*

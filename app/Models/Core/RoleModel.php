@@ -9,37 +9,43 @@ use CodeIgniter\Model;
 
 class RoleModel extends Model
 {
-    protected $table      = '_tenantroles';
+    protected $table      = '_roles';
     protected $primaryKey = 'id';
 
-    public function getRoles($status='')
+    public function getRoles($exclude=[])
     {
-        return $this->db->table('_tenantroles')->select(
+        $query = $this->db->table('_roles')->select(
         [
-        '_tenantroles.id',
+        'id',
         'rolename',
         'roledesc',
-        '_tenantroles.status',
-        '_tenantroles.updatedat'
+        'status',
+        'updatedat'
         ])
-        ->join('_roles', '_roles.id = _tenantroles.roleid')
-        ->where('_tenantroles.tenantid', 1)
-        ->get()->getResultArray();
+        ->where('tenantid', 1);
+
+        if (isset($exclude) && !empty($exclude)) {
+            foreach ($exclude as $key => $value) {
+            $query->where($key.' !=', $value);
+            }
+        }
+
+      return $query->get()->getResultArray();
     }
 
     public function getRole($id=0)
     {
         $rarray = [];
 
-        $role = $this->db->table('_tenantroles')->select(
+        $role = $this->db->table('_roles')->select(
         [
-        '_tenantroles.id',
+        'id',
         'rolename',
         'roledesc',
-        '_tenantroles.status'
+        'status'
         ])
-        ->join('_roles', '_roles.id = _tenantroles.roleid')
-        ->where('_tenantroles.id', $id)
+        ->where('tenantid', 1)
+        ->where('id', $id)
         ->get()->getResult();
 
         if ( !empty($role)) {
@@ -57,33 +63,47 @@ class RoleModel extends Model
     
     public function getRolePermmissions($roleid=0)
     {
-        return $this->db->table('_tenantrolepermissions')->select(
+        return $this->db->table('_rolepermissions')->select(
         [
-        '_tenantrolepermissions.id',
+        '_rolepermissions.id',
+        '_rolepermissions.rid',
+        '_rolepermissions.pid',
+        '_permissions.permissioncode',
         '_permissions.permissionname',
-        '_tenantrolepermissions.r_access',
-        '_tenantrolepermissions.w_access',
-        '_tenantrolepermissions.d_access'
+        '_permissions.permissiondesc',
+        '_rolepermissions.r_access',
+        '_rolepermissions.w_access',
+        '_rolepermissions.d_access',
+        '_rolepermissions.r_enable',
+        '_rolepermissions.w_enable',
+        '_rolepermissions.d_enable'
         ])
-        ->join('_tenantroles', '_tenantroles.id = _tenantrolepermissions.trid')
-        ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
-        ->where('_tenantroles.id', $roleid)
+        ->join('_roles', '_roles.id = _rolepermissions.rid')
+        ->join('_permissions', '_permissions.id = _rolepermissions.pid')
+        ->where('_roles.id', $roleid)
         ->get()->getResultArray();
     }
 
     public function getRolePermmission($id=0)
     {
-        return $this->db->table('_tenantrolepermissions')->select(
+        return $this->db->table('_rolepermissions')->select(
         [
-        '_tenantrolepermissions.id',
+        '_rolepermissions.id',
+        '_rolepermissions.rid',
+        '_rolepermissions.pid',
+        '_permissions.permissioncode',
         '_permissions.permissionname',
-        '_tenantrolepermissions.r_access',
-        '_tenantrolepermissions.w_access',
-        '_tenantrolepermissions.d_access'
+        '_permissions.permissiondesc',
+        '_rolepermissions.r_access',
+        '_rolepermissions.w_access',
+        '_rolepermissions.d_access',
+        '_rolepermissions.r_enable',
+        '_rolepermissions.w_enable',
+        '_rolepermissions.d_enable'
         ])
-        ->join('_tenantroles', '_tenantroles.id = _tenantrolepermissions.trid')
-        ->join('_permissions', '_permissions.id = _tenantrolepermissions.pmid')
-        ->where('_tenantrolepermissions.id', $id)
+        ->join('_roles', '_roles.id = _rolepermissions.rid')
+        ->join('_permissions', '_permissions.id = _rolepermissions.pid')
+        ->where('_rolepermissions.id', $id)
         ->get()->getResult();
     }
 
@@ -107,7 +127,7 @@ class RoleModel extends Model
             return false;
         }
 
-        return $this->db->table('_tenantrolepermissions')
+        return $this->db->table('_rolepermissions')
         ->set($set_column, $access)->where('id', $id)->update();
     }
 

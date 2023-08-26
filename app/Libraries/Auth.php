@@ -55,6 +55,18 @@ class Auth {
         return static::$authmodel->updateLogin($credentials['email']);
     }
 
+    public static function getAuthUserID()
+    {
+        $auth = static::$authmodel->getAuth(self::email());
+        return $auth['id'];
+    }
+
+    public static function getAuthRoleID()
+    {
+        $auth = static::$authmodel->getAuth(self::email());
+        return $auth['roleid'];
+    }
+
     public static function register($data=[])
     {       
         return is_null($data) ? false : ( static::$authmodel->insert($data) ? true : false );

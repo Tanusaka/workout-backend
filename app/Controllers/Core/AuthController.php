@@ -124,9 +124,14 @@ class AuthController extends BaseController
 		}
 	}
 
-	public function getAuthTenantID()
+	public function getAuthID()
 	{
-		# code...
+		return Auth::getAuthUserID();
+	}
+
+	public function getAuthRoleID()
+	{
+		return Auth::getAuthRoleID();
 	}
 
 	private function setValidationRules($type='')
@@ -144,7 +149,7 @@ class AuthController extends BaseController
 				'confirm_password' => [
 					'label'  => 'Confirm Password',
 					'rules'  => 'required|matches[password]'
-				  ]
+				]
             ]);
         } else if ( $type == 'login' ) { 
             $this->validation->setRules([

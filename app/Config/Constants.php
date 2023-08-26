@@ -96,15 +96,22 @@ defined('API_MSG_SUCCESS_LOGOUT')            || define('API_MSG_SUCCESS_LOGOUT',
 defined('API_MSG_SUCCESS_LOGOUT_ALREADY')    || define('API_MSG_SUCCESS_LOGOUT_ALREADY', 'You have been logged out already.');
 
 
-defined('API_MSG_SUCCESS_USER_CREATED')      || define('API_MSG_SUCCESS_USER_CREATED', 'User has been created successfully.');
-defined('API_MSG_SUCCESS_USER_UPDATED')      || define('API_MSG_SUCCESS_USER_UPDATED', 'User has been updated successfully.');
-defined('API_MSG_SUCCESS_USER_DELETED')      || define('API_MSG_SUCCESS_USER_DELETED', 'User has been deleted successfully.');
+defined('API_MSG_SUCCESS_USER_CREATED')           || define('API_MSG_SUCCESS_USER_CREATED', 'User has been created successfully.');
+defined('API_MSG_SUCCESS_USER_UPDATED')           || define('API_MSG_SUCCESS_USER_UPDATED', 'User has been updated successfully.');
+defined('API_MSG_SUCCESS_USER_PASSWORD_UPDATED')  || define('API_MSG_SUCCESS_USER_PASSWORD_UPDATED', 'User password has been updated successfully.');
+defined('API_MSG_SUCCESS_USER_ROLE_UPDATED')      || define('API_MSG_SUCCESS_USER_ROLE_UPDATED', 'User role has been updated successfully.');
+
+
+
+defined('API_MSG_SUCCESS_USER_DELETED')               || define('API_MSG_SUCCESS_USER_DELETED', 'User has been deleted successfully.');
 
 
 defined('API_MSG_SUCCESS_ROLE_PERMISSIONS_UPDATED')     || define('API_MSG_SUCCESS_ROLE_PERMISSIONS_UPDATED', 'Role permissions has been updated successfully.');
 
 
 
+defined('API_MSG_SUCCESS_LINK_CREATED')           || define('API_MSG_SUCCESS_LINK_CREATED', 'User link has been created successfully.');
+defined('API_MSG_SUCCESS_LINK_DELETED')               || define('API_MSG_SUCCESS_LINK_DELETED', 'User link has been deleted successfully.');
 
 
 defined('API_MSG_SUCCESS_COURSE_CREATED')    || define('API_MSG_SUCCESS_COURSE_CREATED', 'Course has been created successfully.');
