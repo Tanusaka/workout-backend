@@ -1,4 +1,4 @@
-# Disable directory browsing
+# Disable directory browsing here
 Options All -Indexes
 
 # ----------------------------------------------------------------------
