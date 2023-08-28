@@ -93,9 +93,9 @@ $routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController:
  * --------------------------------------------------------------------
  * Chats Routing
  * --------------------------------------------------------------------*/
-$routes->get('/chats', 'App/Courses/ChatController::index', ['filter' => 'authguard:courses-r']);
+$routes->get('/chats', 'App/ChatController::index', ['filter' => 'authguard:courses-r']);
 
-$routes->post('/chats/get', 'App/Courses/ChatController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/chats/get', 'App/ChatController::get', ['filter' => 'authguard:courses-r']);
 
 // $routes->post('/apps/chats/create', 'App/ChatController::save');
 
