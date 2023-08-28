@@ -29,6 +29,13 @@ class ChatModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
+    public function getChats()
+    {
+        $selectColumns = ['message_id','sender_id', 'receiver_id', 'message_text', 'timestamp'];
+                
+        return $this->select($selectColumns)->findAll();        
+    }
+
     public function send($sender_id, $receiver_id, $message_text) {
         $data = [
             'sender_id' => $sender_id,
