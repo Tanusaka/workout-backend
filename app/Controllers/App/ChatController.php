@@ -22,6 +22,22 @@ class ChatController extends AuthController
         return $this->respond($this->successResponse(200, "", $this->chatmodel->getChats()), 200);
     }
 
+    public function retrieveChatThread() {
+	$user_id = $this->request->getVar('user_id');
+	$other_user_id = $this->request->getVar('other_user_id');
+	$limit = $this->request->getVar('limit');
+	$offset = $this->request->getVar('offset');
+	
+	$messages = $chatmodel->retrieve($user_id, $other_user_id, $limit, $offset);
+	
+	$response = [
+	    'messages' => $messages,
+	    'status' => 'success'
+	];
+	
+	return $this->respond($response);
+    }
+
     public function get()
     {
         try {
