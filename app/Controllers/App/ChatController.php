@@ -63,28 +63,22 @@ class ChatController extends AuthController
 
     public function save()
 	{
-		$this->setValidationRules('save');
-
-        if ( $this->isValid() ) {           
+		
+	$sender_id = $this->request->getVar('sender_id');
+        $receiver_id = $this->request->getVar('receiver_id');
+        $message_text = $this->request->getVar('message_text');
         
-			$chat = [
-                'prid'=> trim($this->request->getVar('prid')), 
-                'type'=> trim($this->request->getVar('type')),
-				'name'=> trim($this->request->getVar('name')),
-                'about'=> trim($this->request->getVar('about')),
-                'image'=> trim($this->request->getVar('image')),
-			];
+        $message_id = $this->chatmodel->send($sender_id, $receiver_id, $message_text);
 
-			if ( !$this->chatmodel->save_chat($chat) ) {
-				return $this->failServerError(HTTP_500);
-			}
+	$response = [
+            'message_id' => $message_id,
+            'timestamp' => date('Y-m-d H:i:s'),
+            'status' => 'success'
+        ];
 
-			return $this->respond($this->getSuccessResponse(API_MSG_SUCCESS_CHAT_CREATED), 200);
-        
-		} else {
-            return $this->failValidationErrors($this->errors);
-        }
-	}
+	return $this->respond($response);
+
+    }
 
     private function setValidationRules($type='')
     {
