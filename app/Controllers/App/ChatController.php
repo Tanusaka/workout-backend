@@ -17,6 +17,34 @@ class ChatController extends AuthController
         $this->chatmodel = new ChatModel();
     }
 
+    public function index()
+    {
+        return $this->respond($this->successResponse(200, "", $this->chatmodel->getChats()), 200);
+    }
+
+    public function get()
+    {
+        try {
+            $id = $this->request->getVar('id');
+
+            if ( !isset($id) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $chat = $this->chatmodel->getChat($id);
+
+            if ( is_null($chat) ) {
+                return $this->respond($this->errorResponse(404,"Chat cannot be found."), 404);
+            }
+
+            return $this->respond($this->successResponse(200, "", $chat), 200);
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
+    }
+
     public function save()
 	{
 		$this->setValidationRules('save');
