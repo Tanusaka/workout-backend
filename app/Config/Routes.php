@@ -96,7 +96,7 @@ $routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController:
 $routes->get('/chats', 'App/ChatController::index', ['filter' => 'authguard:courses-r']);
 
 $routes->post('/chats/get', 'App/ChatController::retrieveChatThread', ['filter' => 'authguard:courses-r']);
-
+$routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard:courses-r']);
 // $routes->post('/apps/chats/create', 'App/ChatController::save');
 
 
