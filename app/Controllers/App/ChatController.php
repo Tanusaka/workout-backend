@@ -28,7 +28,7 @@ class ChatController extends AuthController
 	$limit = $this->request->getVar('limit');
 	$offset = $this->request->getVar('offset');
 	
-	$messages = $chatmodel->retrieve($user_id, $other_user_id, $limit, $offset);
+	$messages = $this->chatmodel->retrieve($user_id, $other_user_id, $limit, $offset);
 	
 	$response = [
 	    'messages' => $messages,
