@@ -9,21 +9,18 @@ use CodeIgniter\Model;
 
 class ChatModel extends Model
 {
-    protected $table      = 'chats';
-    protected $primaryKey = 'id';
 
+    protected $table = 'chats';
+    protected $primaryKey = 'message_id';
+    protected $allowedFields = ['sender_id', 'receiver_id', 'message_text', 'timestamp'];
+
+    
     protected $protectFields    = false;
 
-    // Dates
-    protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
-    protected $createdField         = 'createdat';
-    protected $updatedField         = 'updatedat';
-    #protected $deletedField         = 'deleted_at';
-
+    
     // Callbacks
     protected $allowCallbacks       = true;
-    protected $beforeInsert         = ['setStatus'];
+    protected $beforeInsert         = [];
     protected $afterInsert          = [];
     protected $beforeUpdate         = [];
     protected $afterUpdate          = [];
@@ -32,14 +29,25 @@ class ChatModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    protected function setStatus(array $data)
-    {   
-        $data['data']['status'] = 'A';
-        return $data;
+    public function send($sender_id, $receiver_id, $message_text) {
+        $data = [
+            'sender_id' => $sender_id,
+            'receiver_id' => $receiver_id,
+            'message_text' => $message_text,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+
+        $this->insert($data);
+
+        return $this->insertID();
     }
 
-    public function save_chat($data=[])
-    {
-        return is_null($data) ? false : ( $this->insert($data) ? true : false );
+    public function retrieve($user_id, $other_user_id, $limit, $offset) {
+        $builder = $this->table('messages');
+        $builder->where('(sender_id', $user_id)->where('receiver_id', $other_user_id)->orWhere('(sender_id', $other_user_id)->where('receiver_id', $user_id));
+        $builder->orderBy('timestamp', 'DESC');
+        $builder->limit($limit, $offset);
+
+        return $builder->get()->getResult();
     }
 }
