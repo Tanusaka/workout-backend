@@ -51,7 +51,7 @@ class ChatModel extends Model
 
     public function retrieve($user_id, $other_user_id, $limit, $offset) {
         $builder = $this->table('messages');
-        $builder->where('sender_id', $user_id)->where('receiver_id', $other_user_id)->orWhere('sender_id', $other_user_id)->where('receiver_id', $user_id));
+        $builder->where('sender_id', $user_id)->where('receiver_id', $other_user_id)->orWhere('sender_id', $other_user_id)->where('receiver_id', $user_id);
         $builder->orderBy('timestamp', 'DESC');
         $builder->limit($limit, $offset);
 
