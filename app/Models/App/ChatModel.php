@@ -62,7 +62,7 @@ class ChatModel extends Model
         $queryString = 'SELECT linked_profiles.linkedprofileid, MAX(chats.message_id) as message_id, chats.sender_id, chats.receiver_id, chats.message_text, chats.timestamp FROM linked_profiles
         LEFT JOIN chats ON linked_profiles.linkedprofileid = chats.sender_id OR linked_profiles.linkedprofileid = chats.receiver_id
         WHERE linked_profiles.userid = '.$user_id.'
-        GROUP BY linked_profiles.linkedprofileid;;
+        GROUP BY linked_profiles.linkedprofileid';
         
         return $this->db->query($queryString)->getResultArray();
 
