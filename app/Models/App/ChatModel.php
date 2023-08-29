@@ -59,11 +59,13 @@ class ChatModel extends Model
     }
 
     public function retrieveChats($user_id) {
-        $builder = $this->table('messages');
-        $builder->where('sender_id', $user_id)->where('receiver_id', $other_user_id)->orWhere('sender_id', $other_user_id)->where('receiver_id', $user_id);
-        $builder->orderBy('timestamp', 'DESC');
-        $builder->limit($limit, $offset);
+        $queryString = 'SELECT chats.message_id, chats.sender_id, chats.receiver_id, chats.message_text, chats.timestamp FROM linked_profiles
+        LEFT JOIN chats ON linked_profiles.linkedprofileid = chats.sender_id OR linked_profiles.linkedprofileid = chats.receiver_id
+        WHERE linked_profiles.userid = '.$user_id.'
+        GROUP BY linked_profiles.linkedprofileid
+        ORDER BY chats.timestamp';
+        
+        return $this->db->query($queryString)->getResultArray();
 
-        return $builder->get()->getResult();
     }
 }
