@@ -59,8 +59,9 @@ class ChatModel extends Model
     }
 
     public function retrieveChats($user_id) {
-        $queryString = 'SELECT linked_profiles.linkedprofileid, MAX(chats.message_id) as message_id, chats.sender_id, chats.receiver_id, chats.message_text, chats.timestamp FROM linked_profiles
+        $queryString = 'SELECT linked_profiles.linkedprofileid, _users.email, _users.firstname, _users.lastname, MAX(chats.message_id) as message_id, chats.sender_id, chats.receiver_id, chats.message_text, chats.timestamp FROM linked_profiles
         LEFT JOIN chats ON linked_profiles.linkedprofileid = chats.sender_id OR linked_profiles.linkedprofileid = chats.receiver_id
+        JOIN _users ON linked_profiles.linkedprofileid = _users.id
         WHERE linked_profiles.userid = '.$user_id.'
         GROUP BY linked_profiles.linkedprofileid';
         
