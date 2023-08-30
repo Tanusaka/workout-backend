@@ -40,6 +40,16 @@ class SectionModel extends Model
     return $data;
   }
 
+  public function getSections($courseid=0)
+  {
+    try {
+      $selectColumns = ['id', 'courseid', 'sectionname',' status'];
+      return $this->select($selectColumns)->where('courseid', $courseid)->get()->getResultArray();
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
   public function getSection($id=0)
   {
     try {

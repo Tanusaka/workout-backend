@@ -54,7 +54,7 @@ class CourseModel extends Model
   public function getCourse($id=0, $format='ALL')
   {
     try {
-      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status'];
+      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status', 'createdby', 'createdat'];
   
       $course = $this->select($selectColumns)->where('id', $id)->first();
 
@@ -81,6 +81,9 @@ class CourseModel extends Model
       }
       
       $course['sections'] = $allSections;
+
+      $course['follower_count'] = $this->db->table('course_followers')->where(["courseid" => $course['id']])->countAllResults();
+      $course['review_count'] = $this->db->table('course_reviews')->where(["courseid" => $course['id']])->countAllResults();
 
       return $course;
 

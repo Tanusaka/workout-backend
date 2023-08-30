@@ -114,6 +114,9 @@ defined('API_MSG_SUCCESS_LINK_CREATED')           || define('API_MSG_SUCCESS_LIN
 defined('API_MSG_SUCCESS_LINK_DELETED')               || define('API_MSG_SUCCESS_LINK_DELETED', 'User link has been deleted successfully.');
 
 
+
+
+
 defined('API_MSG_SUCCESS_COURSE_CREATED')    || define('API_MSG_SUCCESS_COURSE_CREATED', 'Course has been created successfully.');
 defined('API_MSG_SUCCESS_COURSE_UPDATED')    || define('API_MSG_SUCCESS_COURSE_UPDATED', 'Course has been updated successfully.');
 defined('API_MSG_SUCCESS_COURSE_DELETED')    || define('API_MSG_SUCCESS_COURSE_DELETED', 'Course has been deleted successfully.');
@@ -127,6 +130,18 @@ defined('API_MSG_SUCCESS_LESSON_UPDATED')   || define('API_MSG_SUCCESS_LESSON_UP
 defined('API_MSG_SUCCESS_LESSON_DELETED')   || define('API_MSG_SUCCESS_LESSON_DELETED', 'Lesson has been deleted successfully.');
 
 defined('API_MSG_SUCCESS_CHAT_CREATED')      || define('API_MSG_SUCCESS_CHAT_CREATED', 'Chat has been created successfully.');
+
+
+defined('API_MSG_SUCCESS_INSTRUCTOR_CREATED') || define('API_MSG_SUCCESS_INSTRUCTOR_CREATED', 'Instructor has been added successfully.');
+defined('API_MSG_SUCCESS_INSTRUCTOR_DELETED') || define('API_MSG_SUCCESS_INSTRUCTOR_DELETED', 'Instructor has been deleted successfully.');
+
+defined('API_MSG_SUCCESS_REVIEW_CREATED') || define('API_MSG_SUCCESS_REVIEW_CREATED', 'Review has been added successfully.');
+defined('API_MSG_SUCCESS_REVIEW_DELETED') || define('API_MSG_SUCCESS_REVIEW_DELETED', 'Review has been deleted successfully.');
+
+defined('API_MSG_SUCCESS_FOLLOWER_CREATED') || define('API_MSG_SUCCESS_FOLLOWER_CREATED', 'Follower has been added successfully.');
+defined('API_MSG_SUCCESS_FOLLOWER_DELETED') || define('API_MSG_SUCCESS_FOLLOWER_DELETED', 'Follower has been deleted successfully.');
+
+
 
 
 defined('HTTP_500')                          || define('HTTP_500', 'Internal Server Error.');

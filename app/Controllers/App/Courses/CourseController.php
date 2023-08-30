@@ -7,6 +7,11 @@ namespace App\Controllers\App\Courses;
 
 use App\Controllers\Core\AuthController;
 use App\Models\App\Courses\CourseModel;
+use App\Models\App\Courses\SectionModel;
+use App\Models\App\Courses\LessonModel;
+use App\Models\App\Courses\InstructorModel;
+use App\Models\App\Courses\ReviewModel;
+use App\Models\App\Courses\FollowerModel;
 
 class CourseController extends AuthController
 {
@@ -90,7 +95,7 @@ class CourseController extends AuthController
 				'coursename'=> trim($this->request->getVar('coursename')),
                 'courseintro'=> trim($this->request->getVar('courseintro')),
                 'coursedescription'=> trim($this->request->getVar('coursedescription')),
-                'coursemediapath' => trim($this->request->getVar('coursemediapath'))
+                //'coursemediapath' => trim($this->request->getVar('coursemediapath'))
 			];
 
 			if ( !$this->coursemodel->update_course($course, $courseid) ) {
@@ -98,6 +103,74 @@ class CourseController extends AuthController
 			}
 
             return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_UPDATED), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+    }
+
+    public function delete() {
+        $this->setValidationRules('delete');
+
+        if ( $this->isValid() ) {           
+        
+            $id = trim($this->request->getVar('id'));
+
+            $course = $this->coursemodel->getCourse($id);
+
+            if ( empty($course) ) {
+                return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
+            }
+
+			if ( !$this->coursemodel->delete(['id'=>$course['id']]) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            $sectionmodel = new SectionModel();
+            $lessonmodel = new LessonModel();
+            $instructormodel = new InstructorModel();
+            $reviewmodel = new ReviewModel();
+            $followermodel = new FollowerModel();
+
+            #delete all contents
+            $sections = $sectionmodel->getSections($course['id']);
+
+            foreach ($sections as $section) {
+                if ( !$lessonmodel->deleteLessonsBySection($section['id']) ) {
+                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                }
+
+                if ( !$sectionmodel->delete(['id'=>$section['id']]) ) {
+                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                }
+            }
+
+            #delete all instructors
+            $instructors = $instructormodel->getInstructors($course['id']);
+            foreach ($instructors as $instructor) {
+                if ( !$instructormodel->delete(['id'=>$instructor['id']]) ) {
+                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                }
+            }
+
+            #delete all reviews
+            $reviews = $reviewmodel->getReviews($course['id']);
+            foreach ($reviews as $review) {
+                if ( !$reviewmodel->delete(['id'=>$review['id']]) ) {
+                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                }
+            }
+
+            #delete all followers
+            $followers = $followermodel->getFollowers($course['id']);
+            foreach ($followers as $follower) {
+                if ( !$followermodel->delete(['id'=>$follower['id']]) ) {
+                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                }
+            }
+
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_DELETED), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -136,14 +209,29 @@ class CourseController extends AuthController
                     'label'  => 'Course ID',
                     'rules'  => 'required'
                 ],
+                'coursename' => [
+                    'label'  => 'Course Name',
+                    'rules'  => 'required'
+				],
+                'courseintro' => [
+                    'label'  => 'Course Intro',
+                    'rules'  => 'required'
+				],
                 'coursetype' => [
                     'label'  => 'Course Type',
                     'rules'  => 'required'
                 ],
-                'coursename' => [
-                    'label'  => 'Course Name',
+                'coursedescription' => [
+                    'label'  => 'Course Description',
                     'rules'  => 'required'
-				]
+                ],
+            ]);
+        } elseif ( $type == 'delete' ) {
+            $this->validation->setRules([
+                'id' => [
+                    'label'  => 'Course ID',
+                    'rules'  => 'required'
+                ]
             ]);
         } else {
             $this->validation->setRules([]);

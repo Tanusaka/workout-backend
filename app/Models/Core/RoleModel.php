@@ -22,7 +22,9 @@ class RoleModel extends Model
         'status',
         'updatedat'
         ])
-        ->where('tenantid', 1);
+        ->where('tenantid', 1)
+        ->where('rolename !=', 'Super Administrator')
+        ->where('rolename !=', 'Administrator');
 
         if (isset($exclude) && !empty($exclude)) {
             foreach ($exclude as $key => $value) {

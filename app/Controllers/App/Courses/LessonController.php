@@ -49,9 +49,9 @@ class LessonController extends AuthController
 			$lesson = [
                 'sectionid'=> trim($this->request->getVar('sectionid')), 
                 'lessonname'=> trim($this->request->getVar('lessonname')),
-				'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
+				//'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
                 'lessondescription'=> trim($this->request->getVar('lessondescription')),
-                'lessonduration'=> trim($this->request->getVar('lessonduration')),
+                //'lessonduration'=> trim($this->request->getVar('lessonduration')),
 			];
 
 			if ( !$this->lessonmodel->saveLesson($lesson) ) {
@@ -81,9 +81,9 @@ class LessonController extends AuthController
 
 			$lesson = [
                 'lessonname'=> trim($this->request->getVar('lessonname')),
-				'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
+				//'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
                 'lessondescription'=> trim($this->request->getVar('lessondescription')),
-                'lessonduration'=> trim($this->request->getVar('lessonduration')),
+                //'lessonduration'=> trim($this->request->getVar('lessonduration')),
 			];
 
 			if ( !$this->lessonmodel->updateLesson($lesson, $lessonid) ) {
@@ -97,6 +97,30 @@ class LessonController extends AuthController
         }
 	}
 
+    public function delete() {
+        $this->setValidationRules('delete');
+
+        if ( $this->isValid() ) {           
+        
+            $id = trim($this->request->getVar('id'));
+
+            $lesson = $this->lessonmodel->getLesson($id);
+
+            if ( empty($lesson) ) {
+                return $this->respond($this->errorResponse(404,"Lesson cannot be found."), 404);
+            }
+
+			if ( !$this->lessonmodel->delete(['id'=>$lesson['id']]) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DELETED), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+    }
+
     private function setValidationRules($type='')
     {
         if ( $type == 'save' ) {
@@ -109,8 +133,16 @@ class LessonController extends AuthController
                     'label'  => 'Lesson Name',
                     'rules'  => 'required|is_unique[course_lessons.lessonname]'
 				],
-                'lessonmediapath' => [
-                    'label'  => 'Lesson Video',
+                // 'lessonmediapath' => [
+                //     'label'  => 'Lesson Video',
+                //     'rules'  => 'required'
+                // ],
+                // 'lessonduration' => [
+                //     'label'  => 'Lesson Duration',
+                //     'rules'  => 'required'
+                // ],
+                'lessondescription' => [
+                    'label'  => 'Lesson Description',
                     'rules'  => 'required'
                 ],
             ]);
@@ -124,10 +156,25 @@ class LessonController extends AuthController
                     'label'  => 'Lesson Name',
                     'rules'  => 'required|is_unique[course_lessons.lessonname,id,{lessonid}]'
 				],
-                'lessonmediapath' => [
-                    'label'  => 'Lesson Video',
+                // 'lessonmediapath' => [
+                //     'label'  => 'Lesson Video',
+                //     'rules'  => 'required'
+                // ],
+                // 'lessonduration' => [
+                //     'label'  => 'Lesson Duration',
+                //     'rules'  => 'required'
+                // ],
+                'lessondescription' => [
+                    'label'  => 'Lesson Description',
                     'rules'  => 'required'
                 ],
+            ]);
+        } elseif ( $type == 'delete' ) {
+            $this->validation->setRules([
+                'id' => [
+                    'label'  => 'Lesson ID',
+                    'rules'  => 'required'
+                ]
             ]);
         } else {
             $this->validation->setRules([]);

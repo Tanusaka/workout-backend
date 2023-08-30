@@ -57,7 +57,7 @@ class UserModel extends Model
         '_users.status'
       ])
       ->join('_roles', '_roles.id = _users.roleid')
-      ->where('_users.tenantid', 1);
+      ->where('_users.tenantid', 1)->where('rolename !=', 'Administrator');;
 
       if (isset($exclude) && !empty($exclude)) {
         foreach ($exclude as $key => $value) {

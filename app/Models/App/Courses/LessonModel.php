@@ -68,4 +68,9 @@ class LessonModel extends Model
     return $this->where('id', $id)->update();
   }
 
+  public function deleteLessonsBySection($id=null)
+  {
+      return $this->where('sectionid', $id)->delete();
+  }
+
 }

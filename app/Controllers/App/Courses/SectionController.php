@@ -7,6 +7,7 @@ namespace App\Controllers\App\Courses;
 
 use App\Controllers\Core\AuthController;
 use App\Models\App\Courses\SectionModel;
+use App\Models\App\Courses\LessonModel;
 
 class SectionController extends AuthController
 {
@@ -91,6 +92,36 @@ class SectionController extends AuthController
         }
 	}
 
+    public function delete() {
+        $this->setValidationRules('delete');
+
+        if ( $this->isValid() ) {           
+        
+            $id = trim($this->request->getVar('id'));
+
+            $section = $this->sectionmodel->getSection($id);
+
+            if ( empty($section) ) {
+                return $this->respond($this->errorResponse(404,"Section cannot be found."), 404);
+            }
+
+            if ( !$this->sectionmodel->delete(['id'=>$section['id']]) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            $lessonmodel = new LessonModel();
+
+            if ( !$lessonmodel->deleteLessonsBySection($section['id']) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_DELETED), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+    }
+
     private function setValidationRules($type='')
     {
         if ( $type == 'save' ) {
@@ -114,6 +145,13 @@ class SectionController extends AuthController
                     'label'  => 'Section Name',
                     'rules'  => 'required|is_unique[course_sections.sectionname,id,{sectionid}]'
 				]
+            ]);
+        } elseif ( $type == 'delete' ) {
+            $this->validation->setRules([
+                'id' => [
+                    'label'  => 'Section ID',
+                    'rules'  => 'required'
+                ]
             ]);
         } else {
             $this->validation->setRules([]);
