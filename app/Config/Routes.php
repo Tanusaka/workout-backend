@@ -111,7 +111,7 @@ $routes->post('/courses/followers/delete', 'App/Courses/FollowerController::dele
  * --------------------------------------------------------------------
  * Chats Routing
  * --------------------------------------------------------------------*/
-$routes->get('/chats', 'App/ChatController::index', ['filter' => 'authguard:courses-r']);
+$routes->post('/chats', 'App/ChatController::index', ['filter' => 'authguard:courses-r']);
 
 $routes->post('/chats/get', 'App/ChatController::retrieveChatThread', ['filter' => 'authguard:courses-r']);
 $routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard:courses-r']);
