@@ -72,8 +72,8 @@ class ChatController extends AuthController
 
     public function save()
 	{
-		
-	$sender_id = $this->request->getVar('sender_id');
+	$sender_id = $this->getAuthID();
+	//$sender_id = $this->request->getVar('sender_id');
         $receiver_id = $this->request->getVar('receiver_id');
         $message_text = $this->request->getVar('message_text');
         
