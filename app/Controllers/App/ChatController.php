@@ -31,7 +31,8 @@ class ChatController extends AuthController
     }
 
     public function retrieveChatThread() {
-	$user_id = $this->request->getVar('user_id');
+	//$user_id = $this->request->getVar('user_id');
+	$user_id = $this->getAuthID();
 	$other_user_id = $this->request->getVar('other_user_id');
 	$limit = $this->request->getVar('limit');
 	$offset = $this->request->getVar('offset');
