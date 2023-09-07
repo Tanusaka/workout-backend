@@ -46,6 +46,27 @@ class UserController extends AuthController
         }
     }
 
+    public function getdata()
+    {
+        try {
+            $userid = $this->request->getVar('userid');
+
+            if ( !isset($userid) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            if ( $userid == $this->getAuthID() ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            return $this->respond($this->successResponse(200, "", $this->usermodel->getUser($userid)), 200);
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
+    }
+
     public function save()
 	{
 		$this->setValidationRules('save');
