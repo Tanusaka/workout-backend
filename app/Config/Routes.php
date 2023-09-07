@@ -50,6 +50,7 @@ $routes->post('/auth/refreshtokens', 'Core/AuthController::refreshtokens');
  * --------------------------------------------------------------------*/
 $routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:users-r']);
 $routes->post('/users/get', 'Core/UserController::get', ['filter' => 'authguard:users-r']);
+$routes->post('/users/getdata', 'Core/UserController::get_data', ['filter' => 'authguard:courses-r']);
 $routes->post('/users/save', 'Core/UserController::save', ['filter' => 'authguard:users-w']);
 $routes->post('/users/update', 'Core/UserController::update', ['filter' => 'authguard:users-w']);
 $routes->post('/users/update/password', 'Core/UserController::update_password', ['filter' => 'authguard:users-w']);
