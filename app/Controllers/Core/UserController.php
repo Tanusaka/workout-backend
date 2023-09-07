@@ -46,7 +46,7 @@ class UserController extends AuthController
         }
     }
 
-    public function getdata()
+    public function get_data()
     {
         try {
             $userid = $this->request->getVar('userid');
