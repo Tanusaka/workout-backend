@@ -51,14 +51,14 @@ class LinkedprofileController extends AuthController
             $usermodel = new UserModel();
             $role = $usermodel->getUser($userid)->rolename;
 
-            if ($role == 'Trainer') {
+            if ($role == 'Coach') {
                 return $this->respond($this->successResponse(200, "", $this->linkedprofilemodel->getProfilesToLink($userid, ['Student', 'Parent']), 200));
             } else if ($role == 'Parent') {
                 return $this->respond($this->successResponse(200, "", $this->linkedprofilemodel->getProfilesToLink($userid, ['Student']), 200));
             } else if ($role == 'Student') {
                 return $this->respond($this->successResponse(200, "", $this->linkedprofilemodel->getProfilesToLink($userid, ['Parent']), 200));
             } else {
-                return $this->respond($this->successResponse(200, "", $this->linkedprofilemodel->getProfilesToLink($userid, ['Trainer']), 200));
+                return $this->respond($this->successResponse(200, "", $this->linkedprofilemodel->getProfilesToLink($userid, ['Coach']), 200));
             }
 
         } catch (\Exception $e) {
