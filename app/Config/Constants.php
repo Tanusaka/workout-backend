@@ -160,3 +160,6 @@ defined('ER_MSG_INVALID_REQUEST')            || define('ER_MSG_INVALID_REQUEST',
 
 
 defined('SC_MSG_USR_LOGOUT')                 || define('SC_MSG_USR_LOGOUT', 'User has been logged out successfully.');
+
+defined('API_MSG_SUCCESS_MEDIA_CREATED')     || define('API_MSG_SUCCESS_MEDIA_CREATED', 'Media file has been created successfully.');
+defined('API_MSG_SUCCESS_MEDIA_DELETED')     || define('API_MSG_SUCCESS_MEDIA_DELETED', 'Media file has been deleted successfully.');

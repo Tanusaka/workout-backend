@@ -121,6 +121,15 @@ $routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard
 
 /*
  * --------------------------------------------------------------------
+ * Media Routing
+ * --------------------------------------------------------------------*/
+$routes->get('/media', 'App/Media/MediaController::index', ['filter' => 'authguard:courses-r']);
+$routes->post('/media/get', 'App/Media/MediaController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/media/save', 'App/Media/MediaController::save', ['filter' => 'authguard:courses-w']);
+$routes->post('/media/delete', 'App/Media/MediaController::delete', ['filter' => 'authguard:courses-d']);
+
+/*
+ * --------------------------------------------------------------------
  * Additional Routing
  * --------------------------------------------------------------------
  *
