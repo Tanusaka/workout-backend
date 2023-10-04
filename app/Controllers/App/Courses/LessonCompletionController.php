@@ -43,28 +43,26 @@ class LessonCompletionController extends AuthController
     }
 
     public function save()
-	{
-		$this->setValidationRules('save');
-
-        if ( $this->isValid() ) {           
-        
-			$lesson = [
-                'sectionid'=> trim($this->request->getVar('sectionid')), 
-                'lessonname'=> trim($this->request->getVar('lessonname')),
-				//'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
-                'lessondescription'=> trim($this->request->getVar('lessondescription')),
-                //'lessonduration'=> trim($this->request->getVar('lessonduration')),
+	{	
+	        if ( $this->isValid() ) {       
+			$user_id = $this->getAuthID();
+		        
+			$lessonCompletion = [
+				'courseid'=> trim($this->request->getVar('courseid')), 
+				'sectionid'=> trim($this->request->getVar('sectionid')),
+				'lessonid'=> trim($this->request->getVar('lessonid')),
+				'userid'=> $user_id,
 			];
-
-			if ( !$this->lessonmodel->saveLesson($lesson) ) {
+		
+			if ( !$this->lessoncompletionmodel->saveLessonCompletion($lessonCompletion) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
-
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);
-        
+	
+	            	return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);
+	        
 		} else {
-            return $this->respond($this->errorResponse(400,$this->errors), 400);
-        }
+	            return $this->respond($this->errorResponse(400,$this->errors), 400);
+	        }
 	}
 
     public function update()
