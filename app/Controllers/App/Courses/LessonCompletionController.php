@@ -44,7 +44,8 @@ class LessonCompletionController extends AuthController
 
     public function save()
 	{	
-	        if ( $this->isValid() ) {       
+	        if ( $this->isValid() ) {    
+			
 			$user_id = $this->getAuthID();
 		        
 			$lessonCompletion = [
