@@ -40,11 +40,11 @@ class LessonCompletionModel extends Model
     return $data;
   }
 
-  public function getLesson($id=0)
+  public function getLessonCompletion($courseid=0,$sectionid=0,$lessonid=0)
   {
     try {
-      $selectColumns = ['id', 'sectionid', 'lessonname', 'lessonmediapath', 'lessondescription', 'lessonduration', 'status'];
-      return $this->select($selectColumns)->where('id', $id)->first();
+      $selectColumns = ['id', 'courseid', 'sectionid', 'lessonid', 'userid', 'duration', 'completed'];
+      return $this->select($selectColumns)->where('courseid', $courseid)->where('sectionid', $sectionid)->where('lessonid', $lessonid)->first();
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
