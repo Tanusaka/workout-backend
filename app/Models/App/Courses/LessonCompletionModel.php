@@ -50,7 +50,7 @@ class LessonCompletionModel extends Model
     }
   }
 
-  public function saveLessonDuration($data=[])
+  public function saveLessonCompletion($data=[])
   {
     return is_null($data) ? false : ( $this->insert($data) ? true : false );
   }
