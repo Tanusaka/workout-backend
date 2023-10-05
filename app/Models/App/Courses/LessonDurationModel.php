@@ -59,7 +59,7 @@ class LessonDurationModel extends Model
   {
     if ( is_null($data) ) { return false; }
 
-    $this->set('duration', $data['duration'])+1);
+    $this->set('duration', $data['duration']+1);
 
     return $this->where('id', $id)->update();
   }
