@@ -60,11 +60,14 @@ class LessonDurationController extends AuthController
 
 			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($lessonDuration['courseid'], $lessonDuration['sectionid'], $lessonDuration['lessonid']);
 
-		    	if ( is_null($lessonDurationExist) ) {
+		    	if ( is_null($lessonDurationExist) ) {                
+                    $completion = [
+                        'completable'=> FALSE, 
+                    ];
                     if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
                         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
                     } else {
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_CREATED), 200);	
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_CREATED, $completion), 200);	
                     }				
 		    	} else {
                     if ( !$this->lessondurationmodel->updateLessonDuration($lessonDurationExist, $lessonDurationExist['id']) ) {
