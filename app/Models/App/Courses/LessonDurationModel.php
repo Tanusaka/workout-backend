@@ -59,11 +59,7 @@ class LessonDurationModel extends Model
   {
     if ( is_null($data) ) { return false; }
 
-    if ( isset($data['lessonname']) ) { $this->set('lessonname', $data['lessonname']); }
-    if ( isset($data['lessonmediapath']) ) { $this->set('lessonmediapath', $data['lessonmediapath']); }
-    if ( isset($data['lessondescription']) ) { $this->set('lessondescription', $data['lessondescription']); }
-    if ( isset($data['lessonduration']) ) { $this->set('lessonduration', $data['lessonduration']); }
-    if ( isset($data['status']) ) { $this->set('status', $data['status']); }
+    if ( isset($data['duration']) ) { $this->set('duration', $data['duration']+30); }
 
     return $this->where('id', $id)->update();
   }
