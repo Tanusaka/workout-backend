@@ -23,15 +23,13 @@ class LessonDurationController extends AuthController
     public function get()
     {
         try {
-            $courseid = $this->request->getVar('courseid');
-            $sectionid = $this->request->getVar('sectionid');
             $lessonid = $this->request->getVar('lessonid');            
 
             if ( !isset($lessonid) ) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $lessonDuration = $this->lessondurationmodel->getLessonDuration($courseid, $sectionid, $lessonid);
+            $lessonDuration = $this->lessondurationmodel->getLessonDuration($lessonid);
 
             if ( is_null($lessonDuration) ) {
                 return $this->respond($this->errorResponse(404,"Lesson Duration info cannot be found."), 404);
@@ -52,13 +50,11 @@ class LessonDurationController extends AuthController
 			$user_id = $this->getAuthID();
 		        
 			$lessonDuration = [
-				'courseid'=> trim($this->request->getVar('courseid')), 
-				'sectionid'=> trim($this->request->getVar('sectionid')),
 				'lessonid'=> trim($this->request->getVar('lessonid')),
 				'userid'=> $user_id,
 			];
 
-			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($lessonDuration['courseid'], $lessonDuration['sectionid'], $lessonDuration['lessonid']);
+			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($lessonDuration['lessonid']);
 
 		    	if ( is_null($lessonDurationExist) ) {                
                     $completion = [

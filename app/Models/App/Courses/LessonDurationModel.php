@@ -43,8 +43,8 @@ class LessonDurationModel extends Model
   public function getLessonDuration($courseid=0,$sectionid=0,$lessonid=0)
   {
     try {
-      $selectColumns = ['id', 'courseid', 'sectionid', 'lessonid', 'userid', 'duration', 'completed'];
-      return $this->select($selectColumns)->where('courseid', $courseid)->where('sectionid', $sectionid)->where('lessonid', $lessonid)->first();
+      $selectColumns = ['id', 'lessonid', 'userid', 'duration', 'completed'];
+      return $this->select($selectColumns)->where('lessonid', $lessonid)->first();
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
