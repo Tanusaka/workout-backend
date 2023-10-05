@@ -71,7 +71,7 @@ class LessonDurationController extends AuthController
                         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
                     } else {                        
                         $completion = [
-                            'completable'=> FLASE, 
+                            'completable'=> FALSE, 
                         ];
                         $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid'])['lessonduration'];
                         if(is_null($lessonDurationValue) || $lessonDurationValue < $lessonDurationExist['duration']){     
