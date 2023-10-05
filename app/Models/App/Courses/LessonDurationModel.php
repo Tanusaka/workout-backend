@@ -59,7 +59,7 @@ class LessonDurationModel extends Model
   {
     if ( is_null($data) ) { return false; }
 
-    $this->set('duration', $data['duration']+30);
+    $this->set('duration', $data['duration']->modify('+30 minutes'));
 
     return $this->where('id', $id)->update();
   }
