@@ -7,10 +7,10 @@ namespace App\Models\App\Courses;
 
 use CodeIgniter\Model;
 
-class LessonCompletionModel extends Model
+class LessonDurationModel extends Model
 {
 
-  protected $table      = 'lesson_completion';
+  protected $table      = 'lesson_duration';
   protected $primaryKey = 'id';
 
   protected $protectFields    = false;
@@ -40,7 +40,7 @@ class LessonCompletionModel extends Model
     return $data;
   }
 
-  public function getLessonCompletion($courseid=0,$sectionid=0,$lessonid=0)
+  public function getLessonDuration($courseid=0,$sectionid=0,$lessonid=0)
   {
     try {
       $selectColumns = ['id', 'courseid', 'sectionid', 'lessonid', 'userid', 'duration', 'completed'];
@@ -50,7 +50,7 @@ class LessonCompletionModel extends Model
     }
   }
 
-  public function saveLessonCompletion($data=[])
+  public function saveLessonDuration($data=[])
   {
     return is_null($data) ? false : ( $this->insert($data) ? true : false );
   }
