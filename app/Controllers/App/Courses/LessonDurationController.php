@@ -71,8 +71,8 @@ class LessonDurationController extends AuthController
                         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
                     } else {                        
 
-                        $lesson = $this->lessonmodel->getLesson($lessonDuration['lessonid']);
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $lesson), 200);	
+                        $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid'])['lessonduration'];
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $lessonDurationValue), 200);	
 				}	
 			}				            	
 	        
