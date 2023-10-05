@@ -6,7 +6,7 @@
 namespace App\Controllers\App\Courses;
 
 use App\Controllers\Core\AuthController;
-use App\Models\App\Courses\LessonCompletionModel;
+use App\Models\App\Courses\LessonDurationModel;
 
 class LessonDurationController extends AuthController
 {
