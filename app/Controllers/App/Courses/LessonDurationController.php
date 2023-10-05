@@ -57,17 +57,17 @@ class LessonDurationController extends AuthController
 
 			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($lessonDuration['courseid'], $lessonDuration['sectionid'], $lessonDuration['lessonid']);
 
-		    	if ( is_null($lessonDuration) ) {
-				if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
-					return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-				} else {
-					return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
-				}				
+		    	if ( is_null($lessonDurationExist) ) {
+                    if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
+                        return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                    } else {
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
+                    }				
 		    	} else {
-				if ( !$this->lessondurationmodel->updateLessonDuration($lessonDuration, $lessonDurationExist['id']) ) {
-					return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-				} else {
-					return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
+                    if ( !$this->lessondurationmodel->updateLessonDuration($lessonDuration, $lessonDurationExist['id']) ) {
+                        return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+                    } else {
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
 				}	
 			}				            	
 	        
