@@ -40,7 +40,7 @@ class LessonDurationModel extends Model
     return $data;
   }
 
-  public function getLessonDuration($courseid=0,$sectionid=0,$lessonid=0)
+  public function getLessonDuration($lessonid=0)
   {
     try {
       $selectColumns = ['id', 'lessonid', 'userid', 'duration', 'completed'];
