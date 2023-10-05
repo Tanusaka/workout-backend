@@ -129,6 +129,9 @@ defined('API_MSG_SUCCESS_LESSON_CREATED')   || define('API_MSG_SUCCESS_LESSON_CR
 defined('API_MSG_SUCCESS_LESSON_UPDATED')   || define('API_MSG_SUCCESS_LESSON_UPDATED', 'Lesson has been updated successfully.');
 defined('API_MSG_SUCCESS_LESSON_DELETED')   || define('API_MSG_SUCCESS_LESSON_DELETED', 'Lesson has been deleted successfully.');
 
+defined('API_MSG_SUCCESS_LESSON_DURATION_CREATED')   || define('API_MSG_SUCCESS_LESSON_DURATION_CREATED', 'Lesson Duration has been created successfully.');
+defined('API_MSG_SUCCESS_LESSON_DURATION_UPDATED')   || define('API_MSG_SUCCESS_LESSON_DURATION_UPDATED', 'Lesson Duration has been updated successfully.');
+
 defined('API_MSG_SUCCESS_CHAT_CREATED')      || define('API_MSG_SUCCESS_CHAT_CREATED', 'Chat has been created successfully.');
 
 

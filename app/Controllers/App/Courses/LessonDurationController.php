@@ -31,7 +31,7 @@ class LessonDurationController extends AuthController
             $lessonDuration = $this->lessondurationmodel->getLessonDuration($courseid, $sectionid, $lessonid);
 
             if ( is_null($lessonDuration) ) {
-                return $this->respond($this->errorResponse(404,"Lesson info cannot be found."), 404);
+                return $this->respond($this->errorResponse(404,"Lesson Duration info cannot be found."), 404);
             }
 
             return $this->respond($this->successResponse(200, "", $lessonDuration), 200);
@@ -61,13 +61,13 @@ class LessonDurationController extends AuthController
                     if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
                         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
                     } else {
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_CREATED), 200);	
                     }				
 		    	} else {
                     if ( !$this->lessondurationmodel->updateLessonDuration($lessonDurationExist, $lessonDurationExist['id']) ) {
                         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
                     } else {
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);	
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED), 200);	
 				}	
 			}				            	
 	        
