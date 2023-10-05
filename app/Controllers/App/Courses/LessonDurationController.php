@@ -34,7 +34,7 @@ class LessonDurationController extends AuthController
                 return $this->respond($this->errorResponse(404,"Lesson info cannot be found."), 404);
             }
 
-            return $this->respond($this->successResponse(200, "", $lessonCompletion), 200);
+            return $this->respond($this->successResponse(200, "", $lessonDuration), 200);
 
         } catch (\Exception $e) {
             log_message('error', '[ERROR] {exception}', ['exception' => $e]);
