@@ -8,13 +8,13 @@ namespace App\Controllers\App\Courses;
 use App\Controllers\Core\AuthController;
 use App\Models\App\Courses\LessonCompletionModel;
 
-class LessonCompletionController extends AuthController
+class LessonDurationController extends AuthController
 {
-    protected $lessoncompletionmodel;
+    protected $lessondurationmodel;
 
     public function __construct() {
         parent::__construct();
-        $this->lessoncompletionmodel = new LessonCompletionModel();
+        $this->lessondurationmodel = new LessonDurationModel();
     }
 
     public function get()
@@ -28,9 +28,9 @@ class LessonCompletionController extends AuthController
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $lessonCompletion = $this->lessoncompletionmodel->getLessonCompletion($courseid, $sectionid, $lessonid);
+            $lessonDuration = $this->lessondurationmodel->getLessonDuration($courseid, $sectionid, $lessonid);
 
-            if ( is_null($lessonCompletion) ) {
+            if ( is_null($lessonDuration) ) {
                 return $this->respond($this->errorResponse(404,"Lesson info cannot be found."), 404);
             }
 
@@ -48,14 +48,14 @@ class LessonCompletionController extends AuthController
 			
 			$user_id = $this->getAuthID();
 		        
-			$lessonCompletion = [
+			$lessonDuration = [
 				'courseid'=> trim($this->request->getVar('courseid')), 
 				'sectionid'=> trim($this->request->getVar('sectionid')),
 				'lessonid'=> trim($this->request->getVar('lessonid')),
 				'userid'=> $user_id,
 			];
 		
-			if ( !$this->lessoncompletionmodel->saveLessonCompletion($lessonCompletion) ) {
+			if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 	
