@@ -55,7 +55,7 @@ class LessonDurationController extends AuthController
 				'userid'=> $user_id,
 			];
 
-			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($courseid, $sectionid, $lessonid);
+			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($lessonDuration['courseid'], $lessonDuration['sectionid'], $lessonDuration['lessonid']);
 
 		    	if ( is_null($lessonDuration) ) {
 				if ( !$this->lessondurationmodel->saveLessonDuration($lessonDuration) ) {
