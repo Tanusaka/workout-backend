@@ -72,7 +72,7 @@ class LessonDurationController extends AuthController
                     } else {                        
 
                         $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid']);
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $lessonDurationValue['lessonduration']), 200);	
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $lessonDurationValue), 200);	
 				}	
 			}				            	
 	        
