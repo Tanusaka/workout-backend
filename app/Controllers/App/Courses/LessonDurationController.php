@@ -72,7 +72,7 @@ class LessonDurationController extends AuthController
                     } else {                        
                         $completion = [
                             'completable'=> FLASE, 
-                        ]
+                        ];
                         $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid'])['lessonduration'];
                         if(is_null($lessonDurationValue) || $lessonDurationValue < $lessonDurationExist['duration']){     
                             $completion['completable'] = TRUE;
