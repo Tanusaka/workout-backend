@@ -108,7 +108,7 @@ class CourseEnrollmentController extends AuthController
     {
         if ( $type == 'save' ) {
             $this->validation->setRules([
-                'CourseID' => [
+                'courseid' => [
                     'label'  => 'Course Id',
                     'rules'  => 'required'
 				],
@@ -116,7 +116,7 @@ class CourseEnrollmentController extends AuthController
             ]);
         } elseif ( $type == 'update' ) {
                 $this->validation->setRules([
-                    'CourseID' => [
+                    'courseid' => [
                         'label'  => 'Course Id',
                         'rules'  => 'required'
                     ],
