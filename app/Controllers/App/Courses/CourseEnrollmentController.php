@@ -12,6 +12,7 @@ use App\Models\App\Courses\LessonModel;
 use App\Models\App\Courses\InstructorModel;
 use App\Models\App\Courses\ReviewModel;
 use App\Models\App\Courses\FollowerModel;
+use App\Models\App\Courses\CourseEnrollmentsModel;
 
 class CourseEnrollmentController extends AuthController
 {
