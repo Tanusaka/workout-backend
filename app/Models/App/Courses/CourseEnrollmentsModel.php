@@ -81,7 +81,7 @@ class CourseEnrollmentsModel extends Model
 
     if ( isset($status) ) { $this->set('Status', $status); }
 
-    return $this->where('id', $enrolledCourse['EnrollmentID'])->update();
+    return $this->where('EnrollmentID', $enrolledCourse['EnrollmentID'])->update();
   }
 
 }
