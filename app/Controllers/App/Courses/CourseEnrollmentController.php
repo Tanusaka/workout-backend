@@ -114,7 +114,6 @@ class CourseEnrollmentController extends AuthController
                 
             ]);
         } elseif ( $type == 'update' ) {
-            $this->validation->setRules([
                 $this->validation->setRules([
                     'CourseID' => [
                         'label'  => 'Course Id',
@@ -122,7 +121,6 @@ class CourseEnrollmentController extends AuthController
                     ],
                     
                 ]);
-            ]);
         } else {
             $this->validation->setRules([]);
         }
