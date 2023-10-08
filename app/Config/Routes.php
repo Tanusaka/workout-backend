@@ -110,6 +110,11 @@ $routes->post('/courses/followers/get/users', 'App/Courses/FollowerController::g
 $routes->post('/courses/followers/save', 'App/Courses/FollowerController::save', ['filter' => 'authguard:courses_follower-w']);
 $routes->post('/courses/followers/delete', 'App/Courses/FollowerController::delete', ['filter' => 'authguard:courses_follower-d']);
 
+$routes->get('/courses/enrollments/', 'App/Courses/CourseEnrollmentController::index', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/enrollments/get', 'App/Courses/CourseEnrollmentController::get', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/enrollments/save', 'App/Courses/CourseEnrollmentController::save', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/enrollments/update', 'App/Courses/CourseEnrollmentController::update', ['filter' => 'authguard:courses-r']);
+
 /*
  * --------------------------------------------------------------------
  * Chats Routing
