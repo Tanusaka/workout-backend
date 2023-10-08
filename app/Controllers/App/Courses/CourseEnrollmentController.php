@@ -33,7 +33,7 @@ class CourseEnrollmentController extends AuthController
     {
         try {
             $user_id = $this->getAuthID();
-            $course_id = $this->request->getVar('id');
+            $course_id = $this->request->getVar('courseid');
 
             if ( !isset($course_id) ) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
