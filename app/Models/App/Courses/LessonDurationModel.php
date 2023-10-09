@@ -64,9 +64,13 @@ class LessonDurationModel extends Model
     return $this->where('id', $id)->update();
   }
 
-  public function updateLessonCompletion($id=null)
+  public function updateLessonDurationCompletion($data=[], $id=null)
   {
-      return $this->where('sectionid', $id)->delete();
+    if ( is_null($data) ) { return false; }
+
+    $this->set('completed', $data['completed']);
+
+    return $this->where('id', $id)->update();
   }
 
 }

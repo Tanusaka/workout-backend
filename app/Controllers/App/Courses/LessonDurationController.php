@@ -46,7 +46,7 @@ class LessonDurationController extends AuthController
 
     public function save()
 	{	
-	        if ( $this->isValid() ) {    
+	    if ( $this->isValid() ) {    
 			
 			$user_id = $this->getAuthID();
 		        
@@ -102,34 +102,26 @@ class LessonDurationController extends AuthController
 
 			$lessonDurationExist = $this->lessondurationmodel->getLessonDuration($user_id, $lessonDuration['lessonid']);
 
-		    	if ( is_null($lessonDurationExist) ) {                
-                    $completion = [
-                        'completable'=> FALSE, 
-                    ];
-                    if ( !$this->lessondurationmodel->updateLessonDurationCompletion($lessonDuration) ) {
-                        return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-                    } else {
-                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_CREATED, $completion), 200);	
-                    }				
+		    	if ( is_null($lessonDurationExist) ) {
+                    return $this->respond($this->errorResponse(404,"Lesson Duration info cannot be found."), 404);		
 		    	} else {
-                    if ( !$this->lessondurationmodel->updateLessonDurationCompletion($lessonDurationExist, $lessonDurationExist['id']) ) {
-                        return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-                    } else {                        
-                        $completion = [
-                            'completable'=> FALSE, 
-                        ];
-                        $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid'])['lessonduration'];
+                    $lessonDurationValue = $this->lessonmodel->getLesson($lessonDuration['lessonid'])['lessonduration'];
+                    if($lessonDuration['completed']==1) {
                         if(is_null($lessonDurationValue) || $lessonDurationValue < $lessonDurationExist['duration']){     
-                            $completion['completable'] = TRUE;
-                            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $completion), 200);	
-                        } else {                            
-                            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED, $completion), 200);	
+                            $this->lessondurationmodel->updateLessonDurationCompletion($lessonDuration, $lessonDurationExist['id']);
+                            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED), 200);	
                         }
+                    } else if($lessonDuration['completed']==0){
+                        $this->lessondurationmodel->updateLessonDurationCompletion($lessonDuration, $lessonDurationExist['id']);
+                        return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED), 200);
+                    } else {
+                        return $this->respond($this->errorResponse(400,$this->errors), 400);
+                    }
 				}	
 			}				            	
 	        
 		} else {
-	            return $this->respond($this->errorResponse(400,$this->errors), 400);
+	            return $this->respond($this->errorResponse(400,"Data Error."), 400);
 	        }
 	}
        
