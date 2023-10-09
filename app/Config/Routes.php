@@ -93,6 +93,7 @@ $routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController:
 $routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController::delete', ['filter' => 'authguard:courses-d']);
 $routes->post('/courses/sections/lessonduration/get', 'App/Courses/LessonDurationController::get', ['filter' => 'authguard:courses-r']);
 $routes->post('/courses/sections/lessonduration/save', 'App/Courses/LessonDurationController::save', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/sections/lessonduration/update', 'App/Courses/LessonDurationController::update', ['filter' => 'authguard:courses-r']);
 
 $routes->post('/courses/instructors/get', 'App/Courses/InstructorController::get', ['filter' => 'authguard:courses_instructor-r']);
 $routes->post('/courses/instructors/get/trainers', 'App/Courses/InstructorController::getTrainersForLink', ['filter' => 'authguard:courses_instructor-w']);

@@ -40,11 +40,11 @@ class LessonDurationModel extends Model
     return $data;
   }
 
-  public function getLessonDuration($lessonid=0)
+  public function getLessonDuration($user_id=0,$lessonid=0)
   {
     try {
       $selectColumns = ['id', 'lessonid', 'userid', 'duration', 'completed'];
-      return $this->select($selectColumns)->where('lessonid', $lessonid)->first();
+      return $this->select($selectColumns)->where('userid', $user_id)->where('lessonid', $lessonid)->first();
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
@@ -64,7 +64,7 @@ class LessonDurationModel extends Model
     return $this->where('id', $id)->update();
   }
 
-  public function deleteLessonsBySection($id=null)
+  public function updateLessonCompletion($id=null)
   {
       return $this->where('sectionid', $id)->delete();
   }
