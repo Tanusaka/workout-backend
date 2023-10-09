@@ -54,7 +54,7 @@ class CourseModel extends Model
   public function getCourse($id=0, $format='ALL')
   {
     try {
-      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status', 'createdby', 'createdat'];
+      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath', 'priceplan','price', 'status', 'createdby', 'createdat'];
   
       $course = $this->select($selectColumns)->where('id', $id)->first();
 
