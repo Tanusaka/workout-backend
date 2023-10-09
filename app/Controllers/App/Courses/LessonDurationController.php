@@ -110,12 +110,14 @@ class LessonDurationController extends AuthController
                         if(is_null($lessonDurationValue) || $lessonDurationValue < $lessonDurationExist['duration']){     
                             $this->lessondurationmodel->updateLessonDurationCompletion($lessonDuration, $lessonDurationExist['id']);
                             return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED), 200);	
+                        } else {
+                            return $this->respond($this->errorResponse(400,API_MSG_ERROR_LESSON_DURATION_UPDATED), 400);
                         }
                     } else if($lessonDuration['completed']==0){
                         $this->lessondurationmodel->updateLessonDurationCompletion($lessonDuration, $lessonDurationExist['id']);
                         return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DURATION_UPDATED), 200);
                     } else {
-                        return $this->respond($this->errorResponse(400,$this->errors), 400);
+                        return $this->respond($this->errorResponse(400,API_MSG_ERROR_LESSON_DURATION_UPDATED), 400);
                     }
 				}	
 			}				            	
