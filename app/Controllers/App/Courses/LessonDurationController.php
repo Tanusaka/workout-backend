@@ -90,7 +90,7 @@ class LessonDurationController extends AuthController
 
     public function update()
 	{	
-	        if ( $this->isValid() ) {    
+	    if ( $this->isValid() ) {    
 			
 			$user_id = $this->getAuthID();
 		        
@@ -120,7 +120,7 @@ class LessonDurationController extends AuthController
 				}	
 			}				            	
 	        
-		} else {
+		else {
 	            return $this->respond($this->errorResponse(400,"Data Error."), 400);
 	        }
 	}
