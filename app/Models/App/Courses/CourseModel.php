@@ -42,7 +42,7 @@ class CourseModel extends Model
 
   public function getCourses($status='')
   {
-    $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath','status'];
+    $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath', 'priceplan','price','status'];
 
     if ($status=='') {
       return $this->select($selectColumns)->findAll();
