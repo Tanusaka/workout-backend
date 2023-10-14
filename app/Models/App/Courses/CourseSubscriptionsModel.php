@@ -48,7 +48,7 @@ class CourseSubscriptionsModel extends Model
     
   }
 
-  public function getCoursesSubscriptions($userId=0, $courseId=0)
+  public function getCourseSubscriptions($userId=0, $courseId=0)
   {
     $selectColumns = ['SubscriptionID',	'UserID',	'CourseID',	'SubscriptionReference',	'PaymentMethod',	'Reference',	'StartDate', 'EndDate',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'	];
 
