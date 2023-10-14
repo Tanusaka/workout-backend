@@ -40,7 +40,7 @@ class CoursePaymentsModel extends Model
     return $data;
   }
 
-  public function getCoursesPayments($userId=0)
+  public function getCoursesPaymentsByUser($userId=0)
   {
     $selectColumns = ['PaymentID',	'UserID',	'Amount',	'PaymentDate',	'PaymentMethod',	'PaymentReference',	'subscritionid',	'CourseID',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'];
 
@@ -48,12 +48,30 @@ class CoursePaymentsModel extends Model
     
   }
 
-  public function getCoursesPayment($userId=0, $courseId=0)
+  public function getCoursePaymentsByUser($userId=0, $courseId=0)
   {
     try {
       $selectColumns = ['PaymentID',	'UserID',	'Amount',	'PaymentDate',	'PaymentMethod',	'PaymentReference',	'subscritionid',	'CourseID',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'];
   
-      $coursePayment = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->first();
+      $coursePayments = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->findAll();
+
+      if ( !isset($coursePayments) ) {
+        return null;
+      }      
+
+      return $coursePayments;
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
+  public function getLastCoursePaymentByUser($userId=0, $courseId=0)
+  {
+    try {
+      $selectColumns = ['PaymentID',	'UserID',	'Amount',	'PaymentDate',	'PaymentMethod',	'PaymentReference',	'subscritionid',	'CourseID',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'];
+  
+      $coursePayment = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->orderBy('CreatedAt', 'DESC')->first();
 
       if ( !isset($coursePayment) ) {
         return null;

@@ -9,16 +9,24 @@ use App\Controllers\Core\AuthController;
 use App\Models\App\Courses\LessonModel;
 use App\Models\App\Courses\CourseModel;
 use App\Models\App\Courses\SectionModel;
+use App\Models\App\Courses\CoursePaymentsModel;
+use App\Models\App\Courses\CourseSubscriptionsModel;
 
 class LessonController extends AuthController
 {
     protected $lessonmodel;
     protected $sectionmodel;
-    protected $coursemodel;
+    protected $courseModel;
+    protected $coursePaymentsModel;
+    protected $courseSubscriptionModel;
 
     public function __construct() {
         parent::__construct();
         $this->lessonmodel = new LessonModel();
+        $this->sectionModel = new SectionModel();
+        $this->courseModel = new CourseModel();
+        $this->coursePaymentsModel = new CoursePaymentsModel();
+        $this->courseSubscriptionModel = new CourseSubscriptionsModel();
     }
 
     public function get()
@@ -194,16 +202,56 @@ class LessonController extends AuthController
     {
         try {
             $lesson = $this->lessonmodel->getLesson($lessonid);
-            $section = $this->$sectionmodel->getSection($lesson['sectionid']);
-            $course = $this->$coursemodel->getCourse($section['courseid']);
+            $section = $this->$sectionModel->getSection($lesson['sectionid']);
+            $course = $this->$courseModel->getCourse($section['courseid']);
+            $user_id = $this->getAuthID();
 
             if($course['priceplan']=="Free" || $course['price']==0.00){
                 return true;
-            } else if ($course['priceplan']=="One-time") {
-                //check in payment table/model
+            } else if ($course['priceplan']=="OneTime") {
+                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
+                if(!isset($coursePayment)
+                    return false;
                 return true;
-            } else if ($course['priceplan']=="Recurrent") {
-                //check in payment table/model
+            } else if ($course['priceplan']=="Montly") {
+                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
+                if(!isset($coursePayment)){
+                    return false;
+                } else {
+                    helper('date');
+
+                    $currentDateTime = new DateTime();
+                    $anotherDateTime = new DateTime($coursePayment['CreatedAt']);
+
+                    $interval = $currentDateTime->diff($anotherDateTime);
+
+                    $days = $interval->d;
+                    if($days > 31){
+                        return false                    
+                    } else {
+                        return true;
+                    }
+                }
+                
+            } else if ($course['priceplan']=="Yearly") {
+                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
+                if(!isset($coursePayment)){
+                    return false;
+                } else {
+                    helper('date');
+
+                    $currentDateTime = new DateTime();
+                    $anotherDateTime = new DateTime($coursePayment['CreatedAt']);
+
+                    $interval = $currentDateTime->diff($anotherDateTime);
+
+                    $days = $interval->d;
+                    if($days > 365){
+                        return false                    
+                    } else {
+                        return true;
+                    }
+                }
             }
 
         } catch (\Exception $e) {

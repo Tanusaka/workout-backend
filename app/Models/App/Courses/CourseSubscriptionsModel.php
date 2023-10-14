@@ -7,7 +7,7 @@ namespace App\Models\App\Courses;
 
 use CodeIgniter\Model;
 
-class CourseSubscriptionModel extends Model
+class CourseSubscriptionsModel extends Model
 {
 
   protected $table      = 'course_subscriptions';
