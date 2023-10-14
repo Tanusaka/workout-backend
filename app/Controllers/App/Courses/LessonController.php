@@ -207,7 +207,7 @@ class LessonController extends AuthController
             //print_r($course);
             $user_id = $this->getAuthID();
 
-            if($course['priceplan']=="Free" || $course['price']==0.00){
+            if($course['priceplan']=="Free" || $course['price']==0){
                 return true;
             } else if ($course['priceplan']=="OneTime") {
                 $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
