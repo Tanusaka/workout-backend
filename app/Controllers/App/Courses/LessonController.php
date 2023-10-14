@@ -210,7 +210,7 @@ class LessonController extends AuthController
                 return true;
             } else if ($course['priceplan']=="OneTime") {
                 $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
-                if(!isset($coursePayment)
+                if(!isset($coursePayment))
                     return false;
                 return true;
             } else if ($course['priceplan']=="Montly") {
