@@ -10,8 +10,8 @@ use CodeIgniter\Model;
 class CourseSubscriptionModel extends Model
 {
 
-  protected $table      = 'course_payments';
-  protected $primaryKey = 'PaymentID';
+  protected $table      = 'course_subscriptions';
+  protected $primaryKey = 'SubscriptionID';
 
   protected $protectFields    = false;
 
@@ -36,47 +36,75 @@ class CourseSubscriptionModel extends Model
 
   protected function setStatus(array $data)
   {   
-    $data['data']['Status'] = 'A';
+    $data['data']['Status'] = '1';
     return $data;
   }
 
-  public function getCoursesPayments($userId=0)
+  public function getCoursesSubscriptions($userId=0)
   {
-    $selectColumns = ['PaymentID',	'UserID',	'Amount',	'PaymentDate',	'PaymentMethod',	'PaymentReference',	'subscritionid',	'CourseID',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'];
+    $selectColumns = ['SubscriptionID',	'UserID',	'CourseID',	'SubscriptionReference',	'PaymentMethod',	'Reference',	'StartDate', 'EndDate',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'	];
 
     return $this->select($selectColumns)->where('UserID', $userId)->findAll();
     
   }
 
-  public function getCoursesPayment($userId=0, $courseId=0)
+  public function getCoursesSubscriptions($userId=0, $courseId=0)
+  {
+    $selectColumns = ['SubscriptionID',	'UserID',	'CourseID',	'SubscriptionReference',	'PaymentMethod',	'Reference',	'StartDate', 'EndDate',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'	];
+
+    return $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->findAll();
+    
+  }
+
+  public function getCoursesSubscription($subscriptionID=0)
   {
     try {
-      $selectColumns = ['PaymentID',	'UserID',	'Amount',	'PaymentDate',	'PaymentMethod',	'PaymentReference',	'subscritionid',	'CourseID',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'];
+      $selectColumns = ['SubscriptionID',	'UserID',	'CourseID',	'SubscriptionReference',	'PaymentMethod',	'Reference',	'StartDate', 'EndDate', 'Status', 'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'	];
   
-      $coursePayment = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->first();
+      $courseSubscription = $this->select($selectColumns)->where('SubscriptionID', $subscriptionID)->first();
 
-      if ( !isset($coursePayment) ) {
+      if ( !isset($courseSubscription) ) {
         return null;
       }      
 
-      return $coursePayment;
+      return $courseSubscription;
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function saveCoursePayment($data=[])
+  public function getLatestCoursesSubscription($userId=0, $courseId=0)
+  {
+    try {
+      $selectColumns = ['SubscriptionID',	'UserID',	'CourseID',	'SubscriptionReference',	'PaymentMethod',	'Reference',	'StartDate', 'EndDate', 'Status',	'CreatedAt',	'CreatedBy',	'UpdatedAt',	'UpdatedBy'	];
+  
+      $courseSubscription = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->orderBy('CreatedAt', 'DESC')->first();
+
+      if ( !isset($courseSubscription) ) {
+        return null;
+      }      
+
+      return $courseSubscription;
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
+  public function saveCourseSubscription($data=[])
   {
     return is_null($data) ? false : ( $this->insert($data) ? true : false );
   }
 
-  public function deleteCoursePayment($coursePaymentId=[])
+  public function updateCourseSubscription($courseSubscription=[], $status='')
   {
     
-    if ( is_null($coursePaymentId) ) { return false; }
+    if ( is_null($courseSubscription) ) { return false; }
 
-    return $this->where('PaymentID', $coursePaymentId)->delete();
+    if ( isset($status) ) { $this->set('Status', $status); }
+
+    return $this->where('SubscriptionID', $courseSubscription['SubscriptionID'])->update();
   }
 
 }
