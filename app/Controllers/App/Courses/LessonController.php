@@ -204,6 +204,7 @@ class LessonController extends AuthController
             $lesson = $this->lessonmodel->getLesson($lessonid);
             $section = $this->$sectionModel->getSection($lesson['sectionid']);
             $course = $this->$courseModel->getCourse($section['courseid']);
+            print_r($course);
             $user_id = $this->getAuthID();
 
             if($course['priceplan']=="Free" || $course['price']==0.00){
