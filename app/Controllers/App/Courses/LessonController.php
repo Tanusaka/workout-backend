@@ -227,7 +227,7 @@ class LessonController extends AuthController
 
                     $days = $interval->d;
                     if($days > 31){
-                        return false                    
+                        return false;                    
                     } else {
                         return true;
                     }
@@ -247,7 +247,7 @@ class LessonController extends AuthController
 
                     $days = $interval->d;
                     if($days > 365){
-                        return false                    
+                        return false;                   
                     } else {
                         return true;
                     }
