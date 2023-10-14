@@ -39,7 +39,7 @@ class LessonController extends AuthController
             }
             $user_id = $this->getAuthID();
 
-            if(access($user_id, $id)){
+            if($this->access($user_id, $id)){
                 $lesson = $this->lessonmodel->getLesson($id);
 
                 if ( is_null($lesson) ) {
