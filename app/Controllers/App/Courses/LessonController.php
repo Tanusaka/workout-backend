@@ -265,7 +265,7 @@ class LessonController extends AuthController
 
         } catch (\Exception $e) {
             log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return false;
+            //return false;
         }
     }
 }
