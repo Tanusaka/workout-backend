@@ -201,12 +201,7 @@ class LessonController extends AuthController
     private function access($user_id, $lessonid)
     {
         try {
-            helper('debug');
-    
-            $variable = "This is a variable.";
-            $array = ['apple', 'banana', 'cherry'];
-            dd($variable, $array, $object);
-
+            
             $lesson = $this->lessonmodel->getLesson($lessonid);
             $section = $this->$sectionModel->getSection($lesson['sectionid']);
             $course = $this->$courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
