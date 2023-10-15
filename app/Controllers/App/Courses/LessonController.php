@@ -205,9 +205,8 @@ class LessonController extends AuthController
     
             $variable = "This is a variable.";
             $array = ['apple', 'banana', 'cherry'];
-            $object = new stdClass();
-            $object->name = 'John';
-            $object->age = 30;
+            dd($variable, $array, $object);
+            
             $lesson = $this->lessonmodel->getLesson($lessonid);
             $section = $this->$sectionModel->getSection($lesson['sectionid']);
             $course = $this->$courseModel->getCourse($section['courseid']);
@@ -215,7 +214,7 @@ class LessonController extends AuthController
             $user_id = $this->getAuthID();
             
         
-            dd($variable, $array, $object);
+            
             if($course['priceplan']=="Free" || $course['price']==0){
                 return true;
             } else if ($course['priceplan']=="OneTime") {
