@@ -118,7 +118,7 @@ $routes->post('/courses/enrollments/update', 'App/Courses/CourseEnrollmentContro
 
 $routes->get('/courses/payments/', 'App/Courses/CoursePaymentController::index', ['filter' => 'authguard:courses-r']);
 $routes->post('/courses/payments/get', 'App/Courses/CoursePaymentController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/payments/get/last', 'App/Courses/CoursePaymentController::update', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/payments/get/last', 'App/Courses/CoursePaymentController::getLastCoursePaymentByUser', ['filter' => 'authguard:courses-r']);
 $routes->post('/courses/payments/save', 'App/Courses/CoursePaymentController::save', ['filter' => 'authguard:courses-r']);
 
 /*
