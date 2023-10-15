@@ -198,7 +198,7 @@ class LessonController extends AuthController
         }
     }   
 
-    private function access($user_id, $lessonid)
+    public function access($user_id, $lessonid)
     {
         try {
             
