@@ -201,11 +201,6 @@ class LessonController extends AuthController
     private function access($user_id, $lessonid)
     {
         try {
-            $lesson = $this->lessonmodel->getLesson($lessonid);
-            $section = $this->$sectionModel->getSection($lesson['sectionid']);
-            $course = $this->$courseModel->getCourse($section['courseid']);
-            //print_r($course);
-            $user_id = $this->getAuthID();
             helper('debug');
     
             $variable = "This is a variable.";
@@ -213,6 +208,12 @@ class LessonController extends AuthController
             $object = new stdClass();
             $object->name = 'John';
             $object->age = 30;
+            $lesson = $this->lessonmodel->getLesson($lessonid);
+            $section = $this->$sectionModel->getSection($lesson['sectionid']);
+            $course = $this->$courseModel->getCourse($section['courseid']);
+            //print_r($course);
+            $user_id = $this->getAuthID();
+            
         
             dd($variable, $array, $object);
             if($course['priceplan']=="Free" || $course['price']==0){
