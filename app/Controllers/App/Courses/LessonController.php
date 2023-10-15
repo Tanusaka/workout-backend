@@ -15,7 +15,7 @@ use App\Models\App\Courses\CourseSubscriptionsModel;
 class LessonController extends AuthController
 {
     protected $lessonmodel;
-    protected $sectionmodel;
+    protected $sectionModel;
     protected $courseModel;
     protected $coursePaymentsModel;
     protected $courseSubscriptionModel;
