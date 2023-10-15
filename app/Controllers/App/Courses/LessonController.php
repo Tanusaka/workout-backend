@@ -31,8 +31,6 @@ class LessonController extends AuthController
 
     public function get()
     {
-        dd($this->$sectionmodel);
-            $section = $this->$sectionmodel->getSection($lesson['sectionid']);
         try {
             $id = $this->request->getVar('id');
 
@@ -206,8 +204,8 @@ class LessonController extends AuthController
             
             $lesson = $this->lessonmodel->getLesson($lessonid);
             //dd($this->$sectionmodel);
-            $section = $this->$sectionmodel->getSection($lesson['sectionid']);
-            $course = $this->$courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
+            $section = $this->sectionmodel->getSection($lesson['sectionid']);
+            $course = $this->courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
             
             $user_id = $this->getAuthID();
             
@@ -216,12 +214,12 @@ class LessonController extends AuthController
             if($course['priceplan']=="Free" || $course['price']==0){
                 return true;
             } else if ($course['priceplan']=="OneTime") {
-                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
+                $coursePayment = $this->coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
                 if(!isset($coursePayment))
                     return false;
                 return true;
             } else if ($course['priceplan']=="Montly") {
-                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
+                $coursePayment = $this->coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
                 if(!isset($coursePayment)){
                     return false;
                 } else {
