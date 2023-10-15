@@ -206,7 +206,15 @@ class LessonController extends AuthController
             $course = $this->$courseModel->getCourse($section['courseid']);
             //print_r($course);
             $user_id = $this->getAuthID();
-
+            helper('debug');
+    
+            $variable = "This is a variable.";
+            $array = ['apple', 'banana', 'cherry'];
+            $object = new stdClass();
+            $object->name = 'John';
+            $object->age = 30;
+        
+            dd($variable, $array, $object);
             if($course['priceplan']=="Free" || $course['price']==0){
                 return true;
             } else if ($course['priceplan']=="OneTime") {
