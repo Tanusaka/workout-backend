@@ -21,7 +21,7 @@ class CoursePaymentController extends AuthController
     public function index()
     {
         $user_id = $this->getAuthID();
-        return $this->respond($this->successResponse(200, "", $this->coursepaymentmodel->getCoursesPaymentsByUser($user_id), 200);
+        return $this->respond($this->successResponse(200, "", $this->coursepaymentmodel->getCoursesPaymentsByUser($user_id), 200));
     }
 
     public function get()
