@@ -203,9 +203,10 @@ class LessonController extends AuthController
         try {
             
             $lesson = $this->lessonmodel->getLesson($lessonid);
+            dd($sectionModel);
             $section = $this->$sectionModel->getSection($lesson['sectionid']);
             $course = $this->$courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
-            dd($course);
+            
             $user_id = $this->getAuthID();
             
         
