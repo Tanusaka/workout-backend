@@ -206,11 +206,11 @@ class LessonController extends AuthController
             $variable = "This is a variable.";
             $array = ['apple', 'banana', 'cherry'];
             dd($variable, $array, $object);
-            
+
             $lesson = $this->lessonmodel->getLesson($lessonid);
             $section = $this->$sectionModel->getSection($lesson['sectionid']);
-            $course = $this->$courseModel->getCourse($section['courseid']);
-            //print_r($course);
+            $course = $this->$courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
+            dd($course);
             $user_id = $this->getAuthID();
             
         
