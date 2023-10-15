@@ -214,7 +214,7 @@ class LessonController extends AuthController
             $user_id = $this->getAuthID();
             
         
-            
+            log_message('error', '[ERROR] {exception}', ['exception' => $e, 'course' => $course]);
             if($course['priceplan']=="Free" || $course['price']==0){
                 return true;
             } else if ($course['priceplan']=="OneTime") {
