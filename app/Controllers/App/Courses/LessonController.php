@@ -31,6 +31,8 @@ class LessonController extends AuthController
 
     public function get()
     {
+        dd($this->$sectionmodel);
+            $section = $this->$sectionmodel->getSection($lesson['sectionid']);
         try {
             $id = $this->request->getVar('id');
 
