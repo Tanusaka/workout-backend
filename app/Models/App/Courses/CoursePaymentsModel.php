@@ -24,7 +24,7 @@ class CoursePaymentsModel extends Model
 
   // Callbacks
   protected $allowCallbacks       = true;
-  protected $beforeInsert         = ['setStatus'];
+  //protected $beforeInsert         = ['setStatus'];
   // protected $afterInsert          = [];
   // protected $beforeUpdate         = [];
   // protected $afterUpdate          = [];

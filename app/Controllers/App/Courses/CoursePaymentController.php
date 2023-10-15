@@ -61,7 +61,7 @@ class CoursePaymentController extends AuthController
             $coursePayment = $this->coursepaymentmodel->getLastCoursePaymentByUser($user_id, $course_id);
 
             if ( is_null($coursePayment) ) {
-                return $this->respond($this->errorResponse(404,"Course Payment cannot be found."), 404);
+                return $this->respond($this->errorResponse(404,"No Course Payment found."), 404);
             }
 
             return $this->respond($this->successResponse(200, "", $coursePayment), 200);
