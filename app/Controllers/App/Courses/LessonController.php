@@ -15,7 +15,7 @@ use App\Models\App\Courses\CourseSubscriptionsModel;
 class LessonController extends AuthController
 {
     protected $lessonmodel;
-    protected $sectionModel;
+    protected $sectionmodel;
     protected $courseModel;
     protected $coursePaymentsModel;
     protected $courseSubscriptionModel;
@@ -23,7 +23,7 @@ class LessonController extends AuthController
     public function __construct() {
         parent::__construct();
         $this->lessonmodel = new LessonModel();
-        $this->sectionModel = new SectionModel();
+        $this->sectionmodel = new SectionModel();
         $this->courseModel = new CourseModel();
         $this->coursePaymentsModel = new CoursePaymentsModel();
         $this->courseSubscriptionModel = new CourseSubscriptionsModel();
@@ -203,8 +203,8 @@ class LessonController extends AuthController
         try {
             
             $lesson = $this->lessonmodel->getLesson($lessonid);
-            dd($sectionModel);
-            $section = $this->$sectionModel->getSection($lesson['sectionid']);
+            dd($sectionmodel);
+            $section = $this->$sectionmodel->getSection($lesson['sectionid']);
             $course = $this->$courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
             
             $user_id = $this->getAuthID();
