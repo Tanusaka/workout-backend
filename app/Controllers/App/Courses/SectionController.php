@@ -56,7 +56,8 @@ class SectionController extends AuthController
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_CREATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_CREATED,
+            ['section'=>$this->sectionmodel->getSection($this->sectionmodel->getInsertID())]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -85,7 +86,8 @@ class SectionController extends AuthController
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_UPDATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_UPDATED, 
+            ['section'=>$this->sectionmodel->getSection($sectionid)]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -115,7 +117,8 @@ class SectionController extends AuthController
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_DELETED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_SECTION_DELETED,
+            ['section'=>$section]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);

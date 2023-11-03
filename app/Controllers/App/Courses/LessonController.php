@@ -5,28 +5,20 @@
  */
 namespace App\Controllers\App\Courses;
 
-use App\Controllers\Core\AuthController;
+use App\Controllers\App\Courses\CourseController;
 use App\Models\App\Courses\LessonModel;
-use App\Models\App\Courses\CourseModel;
 use App\Models\App\Courses\SectionModel;
-use App\Models\App\Courses\CoursePaymentsModel;
-use App\Models\App\Courses\CourseSubscriptionsModel;
+use App\Models\Core\RoleModel;
 
-class LessonController extends AuthController
+class LessonController extends CourseController
 {
     protected $lessonmodel;
     protected $sectionmodel;
-    protected $courseModel;
-    protected $coursePaymentsModel;
-    protected $courseSubscriptionModel;
 
     public function __construct() {
         parent::__construct();
         $this->lessonmodel = new LessonModel();
         $this->sectionmodel = new SectionModel();
-        $this->courseModel = new CourseModel();
-        $this->coursePaymentsModel = new CoursePaymentsModel();
-        $this->courseSubscriptionModel = new CourseSubscriptionsModel();
     }
 
     public function get()
@@ -37,18 +29,22 @@ class LessonController extends AuthController
             if ( !isset($id) ) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
-            $user_id = $this->getAuthID();
 
-            if($this->access($user_id, $id)){
-                $lesson = $this->lessonmodel->getLesson($id);
+            $lesson = $this->lessonmodel->getLesson($id);
 
-                if ( is_null($lesson) ) {
-                    return $this->respond($this->errorResponse(404,"Lesson cannot be found."), 404);
-                }
+            if ( is_null($lesson) ) {
+                return $this->respond($this->errorResponse(404,"Lesson cannot be found."), 404);
+            }
 
+            $section = $this->sectionmodel->getSection($lesson['sectionid']);
+
+            $paymentInfo = $this->getCoursePaymentInfo($section['courseid']);
+
+            if(!$paymentInfo['paymentrequired']) {
                 return $this->respond($this->successResponse(200, "", $lesson), 200);
             } else {
-                return $this->respond($this->errorResponse(403,"Access denied."), 403);
+                return $this->respond($this->errorResponse(402,"Payment Required.",
+                ['paymentinfo'=>$paymentInfo]), 402);
             }
 
         } catch (\Exception $e) {
@@ -66,16 +62,17 @@ class LessonController extends AuthController
 			$lesson = [
                 'sectionid'=> trim($this->request->getVar('sectionid')), 
                 'lessonname'=> trim($this->request->getVar('lessonname')),
-				//'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
-                'lessondescription'=> trim($this->request->getVar('lessondescription')),
-                //'lessonduration'=> trim($this->request->getVar('lessonduration')),
+                'lessonduration'=> trim($this->request->getVar('lessonduration')),
+				'lessondescription'=> trim($this->request->getVar('lessondescription')),
+                'lessonmediaid'=> trim($this->request->getVar('lessonmediaid')),
 			];
 
 			if ( !$this->lessonmodel->saveLesson($lesson) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_CREATED,
+            ['lesson'=>$this->lessonmodel->getLesson($this->lessonmodel->getInsertID())]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -90,24 +87,29 @@ class LessonController extends AuthController
         
             $lessonid = trim($this->request->getVar('lessonid'));
 
-            $lesson = $this->lessonmodel->getLesson($lessonid);
+            $extlesson = $this->lessonmodel->getLesson($lessonid);
 
-            if ( is_null($lesson) ) {
+            if ( is_null($extlesson) ) {
                 return $this->respond($this->errorResponse(404,"Lesson cannot be found."), 404);
             }
 
 			$lesson = [
                 'lessonname'=> trim($this->request->getVar('lessonname')),
-				//'lessonmediapath'=> trim($this->request->getVar('lessonmediapath')),
-                'lessondescription'=> trim($this->request->getVar('lessondescription')),
-                //'lessonduration'=> trim($this->request->getVar('lessonduration')),
+                'lessonduration'=> trim($this->request->getVar('lessonduration')),
+				'lessondescription'=> trim($this->request->getVar('lessondescription'))
 			];
+
+            $lessonmediaid = trim($this->request->getVar('lessonmediaid'));
+            if ($lessonmediaid!="") {
+                $lesson['lessonmediaid'] = $lessonmediaid;
+            }
 
 			if ( !$this->lessonmodel->updateLesson($lesson, $lessonid) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_UPDATED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_UPDATED,
+            ['lesson'=>$this->lessonmodel->getLesson($lessonid)]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -131,7 +133,8 @@ class LessonController extends AuthController
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DELETED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_DELETED,
+            ['lesson'=>$lesson]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -150,16 +153,16 @@ class LessonController extends AuthController
                     'label'  => 'Lesson Name',
                     'rules'  => 'required|is_unique[course_lessons.lessonname]'
 				],
-                // 'lessonmediapath' => [
-                //     'label'  => 'Lesson Video',
-                //     'rules'  => 'required'
-                // ],
-                // 'lessonduration' => [
-                //     'label'  => 'Lesson Duration',
-                //     'rules'  => 'required'
-                // ],
+                'lessonduration' => [
+                    'label'  => 'Lesson Duration',
+                    'rules'  => 'required'
+                ],
                 'lessondescription' => [
                     'label'  => 'Lesson Description',
+                    'rules'  => 'required'
+                ],
+                'lessonmediaid' => [
+                    'label'  => 'Lesson Media File',
                     'rules'  => 'required'
                 ],
             ]);
@@ -173,14 +176,10 @@ class LessonController extends AuthController
                     'label'  => 'Lesson Name',
                     'rules'  => 'required|is_unique[course_lessons.lessonname,id,{lessonid}]'
 				],
-                // 'lessonmediapath' => [
-                //     'label'  => 'Lesson Video',
-                //     'rules'  => 'required'
-                // ],
-                // 'lessonduration' => [
-                //     'label'  => 'Lesson Duration',
-                //     'rules'  => 'required'
-                // ],
+                'lessonduration' => [
+                    'label'  => 'Lesson Duration',
+                    'rules'  => 'required'
+                ],
                 'lessondescription' => [
                     'label'  => 'Lesson Description',
                     'rules'  => 'required'
@@ -197,71 +196,4 @@ class LessonController extends AuthController
             $this->validation->setRules([]);
         }
     }   
-
-    public function access($user_id, $lessonid)
-    {
-        try {
-            
-            $lesson = $this->lessonmodel->getLesson($lessonid);
-            //dd($this->$sectionmodel);
-            $section = $this->sectionmodel->getSection($lesson['sectionid']);
-            $course = $this->courseModel->getCourse($section['courseid'], 'COURSE_ONLY');
-            
-            $user_id = $this->getAuthID();
-            
-        
-            
-            if($course['priceplan']=="Free" || $course['price']==0){
-                return true;
-            } else if ($course['priceplan']=="OneTime") {
-                $coursePayment = $this->coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
-                if(!isset($coursePayment))
-                    return false;
-                return true;
-            } else if ($course['priceplan']=="Montly") {
-                $coursePayment = $this->coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
-                if(!isset($coursePayment)){
-                    return false;
-                } else {
-                    helper('date');
-
-                    $currentDateTime = new DateTime();
-                    $anotherDateTime = new DateTime($coursePayment['CreatedAt']);
-
-                    $interval = $currentDateTime->diff($anotherDateTime);
-
-                    $days = $interval->d;
-                    if($days > 31){
-                        return false;                    
-                    } else {
-                        return true;
-                    }
-                }
-                
-            } else if ($course['priceplan']=="Yearly") {
-                $coursePayment = $this->$coursePaymentsModel->getLastCoursePaymentByUser($user_id, $course['courseid']);
-                if(!isset($coursePayment)){
-                    return false;
-                } else {
-                    helper('date');
-
-                    $currentDateTime = new DateTime();
-                    $anotherDateTime = new DateTime($coursePayment['CreatedAt']);
-
-                    $interval = $currentDateTime->diff($anotherDateTime);
-
-                    $days = $interval->d;
-                    if($days > 365){
-                        return false;                   
-                    } else {
-                        return true;
-                    }
-                }
-            }
-
-        } catch (\Exception $e) {
-            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            //return false;
-        }
-    }
 }

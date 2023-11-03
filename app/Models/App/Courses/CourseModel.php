@@ -42,70 +42,159 @@ class CourseModel extends Model
 
   public function getCourses($status='')
   {
-    $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath', 'priceplan','price','status'];
+    try {
 
-    if ($status=='') {
-      return $this->select($selectColumns)->findAll();
-    } else {
-      return $this->select($selectColumns)->where('status', $status)->findAll();
-    }    
+      $courses = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1);
+      
+      if ($status!='') {
+        $courses->where('courses.status', $status);
+      }
+
+      return $courses->get()->getResultArray();
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }  
   }
 
-  public function getCourse($id=0, $format='ALL')
+  public function getCoursesByTrainer($trainerid=0, $status='')
   {
     try {
-      $selectColumns = ['id','tenantid','coursetype','coursename','courseintro', 'coursedescription', 'coursemediapath', 'priceplan','price', 'status', 'createdby', 'createdat'];
-  
-      $course = $this->select($selectColumns)->where('id', $id)->first();
 
-      if ( !isset($course) ) {
-        return null;
-      }
-
-      if ( $format=='COURSE_ONLY' ) {
-        return $course;
-      }
-
-      $sections = $this->db->table('course_sections')->select(['id', 'courseid', 'sectionname','status'])
-      ->where('courseid', $course['id'])->where('status', 'A')
-      ->orderBy('id', 'ASC')->get()->getResultArray();
-
-      $allSections = [];
-
-      foreach ($sections as $section) {
-        
-        $section['lessons'] = $this->db->table('course_lessons')->select(['id', 'sectionid', 'lessonname', 'lessonmediapath', 'lessondescription', 'lessonduration', 'status'])
-        ->where('sectionid', $section['id'])->where('status', 'A')->get()->getResultArray();
-        
-        array_push($allSections, $section);
-      }
+      $courses = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1)
+      ->where('instructorprofile', $trainerid);
       
-      $course['sections'] = $allSections;
+      if ($status!='') {
+        $courses->where('courses.status', $status);
+      }
 
-      $course['follower_count'] = $this->db->table('course_followers')->where(["courseid" => $course['id']])->countAllResults();
-      $course['review_count'] = $this->db->table('course_reviews')->where(["courseid" => $course['id']])->countAllResults();
-
-      return $course;
+      return $courses->get()->getResultArray();
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
   }
 
-  public function save_course($data=[])
+  public function getCoursesByEnrollment($userid=0, $status='')
+  {
+    try {
+ 
+      $courses = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('course_enrollments', 'course_enrollments.courseid = courses.id')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1)
+      ->where('course_enrollments.userid', $userid);
+      
+      if ($status!='') {
+        $courses->where('courses.status', $status);
+      }
+
+      return $courses->get()->getResultArray();
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
+  public function getCourse($id=0)
+  {
+    try {
+
+      $course = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1)
+      ->where('courses.id', $id);
+
+      return $course->get()->getRowArray();
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }  
+  }
+
+  public function getCourseByTrainer($id=0, $trainerid=0)
+  {
+    try {
+
+      $course = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1)
+      ->where('courses.id', $id)
+      ->where('instructorprofile', $trainerid);
+
+      return $course->get()->getRowArray();
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }  
+  }
+
+  public function getCourseByEnrollment($id=0, $userid=0)
+  {
+    try {
+ 
+    $course = 
+      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
+      course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
+      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
+      ->join('course_enrollments', 'course_enrollments.courseid = courses.id')
+      ->join('_files', '_files.id = courses.courseimageid', 'left')
+      ->where('courses.tenantid', 1)
+      ->where('courses.id', $id)
+      ->where('course_enrollments.userid', $userid);
+      
+      return $course->get()->getRowArray();
+
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
+  public function saveCourse($data=[])
   {
     return is_null($data) ? false : ( $this->insert($data) ? true : false );
   }
 
-  public function update_course($data=[], $id=null)
+  public function updateCourse($data=[], $id=null)
   {
     if ( is_null($data) ) { return false; }
 
-    if ( isset($data['coursetype']) ) { $this->set('coursetype', $data['coursetype']); }
     if ( isset($data['coursename']) ) { $this->set('coursename', $data['coursename']); }
     if ( isset($data['courseintro']) ) { $this->set('courseintro', $data['courseintro']); }
     if ( isset($data['coursedescription']) ) { $this->set('coursedescription', $data['coursedescription']); }
-    if ( isset($data['coursemediapath']) ) { $this->set('coursemediapath', $data['coursemediapath']); }
+    if ( isset($data['courselevel']) ) { $this->set('courselevel', $data['courselevel']); }
+    if ( isset($data['coursetype']) ) { $this->set('coursetype', $data['coursetype']); }
+    if ( isset($data['courseimageid']) ) { $this->set('courseimageid', $data['courseimageid']); }
+    if ( isset($data['instructorprofile']) ) { $this->set('instructorprofile', $data['instructorprofile']); }
+    if ( isset($data['priceplan']) ) { $this->set('priceplan', $data['priceplan']); }
+    if ( isset($data['price']) ) { $this->set('price', $data['price']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

@@ -54,7 +54,7 @@ class AuthGuard implements FilterInterface
             }
 
             #check user has permissions to access
-            if (  isset($arguments[0]) && !Auth::allows($arguments[0]) ) {
+            if (  isset($arguments[0]) && !Auth::isAllowed($arguments[0]) ) {
                 return Auth::getResponse(403);
             }
 

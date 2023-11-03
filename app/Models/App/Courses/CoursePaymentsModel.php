@@ -73,10 +73,6 @@ class CoursePaymentsModel extends Model
   
       $coursePayment = $this->select($selectColumns)->where('UserID', $userId)->where('CourseID', $courseId)->orderBy('CreatedAt', 'DESC')->first();
 
-      if ( !isset($coursePayment) ) {
-        return null;
-      }      
-
       return $coursePayment;
 
     } catch (\Exception $e) {

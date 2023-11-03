@@ -42,22 +42,13 @@ class SectionModel extends Model
 
   public function getSections($courseid=0)
   {
-    try {
-      $selectColumns = ['id', 'courseid', 'sectionname',' status'];
-      return $this->select($selectColumns)->where('courseid', $courseid)->get()->getResultArray();
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
+      return $this->where('courseid', $courseid)->where('status', 'A')
+      ->get()->getResultArray();
   }
 
   public function getSection($id=0)
   {
-    try {
-      $selectColumns = ['id', 'courseid', 'sectionname',' status'];
-      return $this->select($selectColumns)->where('id', $id)->first();
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
+      return $this->where('id', $id)->first();
   }
 
   public function save_section($data=[])

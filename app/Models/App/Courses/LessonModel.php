@@ -40,14 +40,44 @@ class LessonModel extends Model
     return $data;
   }
 
+  public function getLessons($sectionid=0, $status='')
+  {
+      try {
+
+        $lessons = 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
+        ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
+        ->where('course_lessons.sectionid', $sectionid);
+        
+        if ($status!='') {
+          $lessons->where('course_lessons.status', $status);
+        }
+  
+        return $lessons->get()->getResultArray();
+  
+      } catch (\Exception $e) {
+        throw new \Exception($e->getMessage());
+      } 
+  }
+
   public function getLesson($id=0)
   {
-    try {
-      $selectColumns = ['id', 'sectionid', 'lessonname', 'lessonmediapath', 'lessondescription', 'lessonduration', 'status'];
-      return $this->select($selectColumns)->where('id', $id)->first();
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
+      try {
+
+        $lesson = 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
+        ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
+        ->where('course_lessons.id', $id);
+  
+        return $lesson->get()->getRowArray();
+  
+      } catch (\Exception $e) {
+        throw new \Exception($e->getMessage());
+      } 
   }
 
   public function saveLesson($data=[])
@@ -60,9 +90,9 @@ class LessonModel extends Model
     if ( is_null($data) ) { return false; }
 
     if ( isset($data['lessonname']) ) { $this->set('lessonname', $data['lessonname']); }
-    if ( isset($data['lessonmediapath']) ) { $this->set('lessonmediapath', $data['lessonmediapath']); }
-    if ( isset($data['lessondescription']) ) { $this->set('lessondescription', $data['lessondescription']); }
     if ( isset($data['lessonduration']) ) { $this->set('lessonduration', $data['lessonduration']); }
+    if ( isset($data['lessondescription']) ) { $this->set('lessondescription', $data['lessondescription']); }
+    if ( isset($data['lessonmediaid']) ) { $this->set('lessonmediaid', $data['lessonmediaid']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

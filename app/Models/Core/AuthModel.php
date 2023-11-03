@@ -84,7 +84,7 @@ class AuthModel extends Model
     }
   }
 
-  public function getRtID($email=null)
+  public function getAuthRoleID($email=null)
   {
     try {
       return $this->getAuth($email)['roleid'];
@@ -130,47 +130,69 @@ class AuthModel extends Model
     return $this->set('islogged', 0)->set('atoken', NULL)->set('rtoken', NULL)->set('lastoutat', date('Y-m-d H:i:s'))->where('email', $email)->update();
   }
 
-  public function getAllPermissions($email=null, $tenantid=1)
+  public function getAllPermissions($email=null)
   {
     try {
-      $parray = [];
 
-      $permissions = 
-      $this->db->table('_rolepermissions')->select(['permissioncode','r_access','w_access','d_access'])
-      ->join('_users', '_users.roleid = _rolepermissions.rid')
+      $permissions =  $this->db->table('_rolepermissions')->select(
+      [
+      '_rolepermissions.id',
+      '_rolepermissions.rid',
+      '_rolepermissions.pid',
+      '_permissions.permissioncode',
+      '_permissions.permissionslug',
+      '_permissions.permissionname',
+      '_permissions.permissiondesc',
+      '_permissions.permissiontype',
+      '_rolepermissions.access',
+      '_rolepermissions.status'
+      ])
+      ->join('_roles', '_roles.id = _rolepermissions.rid')
       ->join('_permissions', '_permissions.id = _rolepermissions.pid')
-      ->where('_users.id', $this->getAuthID($email))
-      ->get()->getResultArray();
+      ->where('_roles.id', $this->getAuthRoleID($email))
+      ->get()->getResultArray();  
 
-      foreach ($permissions as $p) {
-        $access = [ 'read' => $p['r_access'], 'write' => $p['w_access'], 'delete' => $p['d_access'] ];
-        $parray[$p['permissioncode']] = $access;
+      $p_array=[];
+
+      foreach ($permissions as $permission) {
+        $p_array[$permission['permissionslug']] = $permission['access'];
       }
-
-      return json_decode(json_encode($parray));
+      
+      return $p_array;
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }
+    
   }
 
-  public function getGuardPermissions($email=null, $guard=null)
+  public function getGuardPermission($email=null, $guard=null)
   {
     try {
-      $parray = [];
 
-      $permissions = 
-      $this->db->table('_rolepermissions')->select(['permissioncode','r_access','w_access','d_access'])
-      ->join('_users', '_users.roleid = _rolepermissions.rid')
+      $permission =  $this->db->table('_rolepermissions')->select(
+      [
+      '_rolepermissions.id',
+      '_rolepermissions.rid',
+      '_rolepermissions.pid',
+      '_permissions.permissioncode',
+      '_permissions.permissionslug',
+      '_permissions.permissionname',
+      '_permissions.permissiondesc',
+      '_permissions.permissiontype',
+      '_rolepermissions.access',
+      '_rolepermissions.status'
+      ])
+      ->join('_roles', '_roles.id = _rolepermissions.rid')
       ->join('_permissions', '_permissions.id = _rolepermissions.pid')
-      ->where('_users.id', $this->getAuthID($email))->where('_permissions.permissioncode', $guard)
-      ->get()->getRowArray();
-
-      if ( !is_null($permissions) ) {
-        $parray = [ 'read' => $permissions['r_access'], 'write' => $permissions['w_access'], 'delete' => $permissions['d_access'] ];
-      }                    
+      ->where('_roles.id', $this->getAuthRoleID($email))->where('_permissions.permissionslug', $guard)
+      ->get()->getRowArray();  
       
-      return json_decode(json_encode($parray));
+      if (empty($permission)) {
+        return false;
+      }
+      
+      return $permission['access'];
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
@@ -181,6 +203,23 @@ class AuthModel extends Model
   public function saveToken($data=[])
   {
     return is_null($data) ? false : ( $this->db->table('_tokens')->insert($data) ? true : false );
+  }
+
+  public function getAuthUser($email)  {
+    try {
+			$users =        
+			$this->db->table('_users')->select('_users.id, _users.tenantid, email, roleid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage')
+			->join('_roles', '_roles.id = _users.roleid')
+      ->join('_files', '_files.id = _users.profileimageid', 'left')
+			->where('_users.tenantid', 1)
+			->where('_users.email', $email)
+			->where('rolename !=', 'Super Administrator');
+
+			return $users->get()->getRowArray();
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
   }
   
 }

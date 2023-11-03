@@ -48,26 +48,50 @@ $routes->post('/auth/refreshtokens', 'Core/AuthController::refreshtokens');
  * --------------------------------------------------------------------
  * User Management Routing
  * --------------------------------------------------------------------*/
-$routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:users-r']);
-$routes->post('/users/get', 'Core/UserController::get', ['filter' => 'authguard:users-r']);
-$routes->post('/users/getdata', 'Core/UserController::get_data', ['filter' => 'authguard:courses-r']);
-$routes->post('/users/save', 'Core/UserController::save', ['filter' => 'authguard:users-w']);
-$routes->post('/users/update', 'Core/UserController::update', ['filter' => 'authguard:users-w']);
-$routes->post('/users/update/password', 'Core/UserController::update_password', ['filter' => 'authguard:users-w']);
-$routes->post('/users/update/role', 'Core/UserController::update_role', ['filter' => 'authguard:users-w']);
+$routes->get('/users', 'Core/UserController::index', ['filter' => 'authguard:user_management']);
+$routes->post('/users/get', 'Core/UserController::get', ['filter' => 'authguard:user_view_profile']);
+$routes->post('/users/get/myprofile', 'Core/UserController::getMyProfile', ['filter' => 'authguard:user_view_profile']);
+$routes->post('/users/get/trainers', 'Core/UserController::getTrainers', ['filter' => 'authguard:user_view_trainer_profile']);
+$routes->post('/users/save', 'Core/UserController::save', ['filter' => 'authguard:user_create_profile']);
+$routes->post('/users/update', 'Core/UserController::update', ['filter' => 'authguard:user_update_profile']);
+$routes->post('/users/update/role', 'Core/UserController::updateRole', ['filter' => 'authguard:user_update_role']);
+$routes->post('/users/update/password', 'Core/UserController::updatePassword', ['filter' => 'authguard:user_update_password']);
+$routes->post('/users/update/description', 'Core/UserController::updateDescription', ['filter' => 'authguard:user_update_profile']);
 
-$routes->get('/roles', 'Core/RoleController::index');
-$routes->post('/roles/get', 'Core/RoleController::get', ['filter' => 'authguard:roles-r']);
-$routes->post('/roles/permissions/update', 'Core/RoleController::updatePermissions', ['filter' => 'authguard:roles-w']);
+// $routes->post('/users/get/connections', 'Core/UserController::getUserConnections', ['filter' => 'authguard:user_view_connections']);
+// $routes->post('/users/add/connections', 'Core/UserController::addUserConnections', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/add/connections', 'Core/ConnectionController::save', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/delete/connections', 'Core/ConnectionController::delete', ['filter' => 'authguard:user_delete_connections']);
+
 
 /*
  * --------------------------------------------------------------------
- * Linked Profile Routing
+ * Role Management Routing
  * --------------------------------------------------------------------*/
-$routes->post('/linkedprofiles/get', 'App/Linkedprofile/LinkedprofileController::get', ['filter' => 'authguard:users-r']);
-$routes->post('/linkedprofiles/get/users', 'App/Linkedprofile/LinkedprofileController::getUsersForLink', ['filter' => 'authguard:users-r']);
-$routes->post('/linkedprofiles/save', 'App/Linkedprofile/LinkedprofileController::save', ['filter' => 'authguard:users-w']);
-$routes->post('/linkedprofiles/delete', 'App/Linkedprofile/LinkedprofileController::delete', ['filter' => 'authguard:users-w']);
+$routes->get('/roles', 'Core/RoleController::index', ['filter' => 'authguard:role_management']);
+$routes->post('/roles/get', 'Core/RoleController::get', ['filter' => 'authguard:role_view_permissions']);
+$routes->post('/roles/permissions/update', 'Core/RoleController::updatePermission', ['filter' => 'authguard:role_update_permissions']);
+
+
+/*
+ * --------------------------------------------------------------------
+ * Connection Management Routing
+ * --------------------------------------------------------------------*/
+// $routes->post('/connections/get', 'Core/ConnectionController::get', ['filter' => 'authguard:user_view_connections']);
+// $routes->post('/linkedprofiles/get/users', 'App/Linkedprofile/LinkedprofileController::getUsersForLink', ['filter' => 'authguard:users-r']);
+// $routes->post('/linkedprofiles/save', 'App/Linkedprofile/LinkedprofileController::save', ['filter' => 'authguard:users-w']);
+// $routes->post('/linkedprofiles/delete', 'App/Linkedprofile/LinkedprofileController::delete', ['filter' => 'authguard:users-w']);
+
+
+
+/*
+ * --------------------------------------------------------------------
+ * File Management Routing
+ * --------------------------------------------------------------------*/
+$routes->get('/files', 'Core/FileController::index', ['filter' => 'authguard:file_management']);
+$routes->post('/files/get', 'Core/FileController::get', ['filter' => 'authguard:file_view']);
+$routes->post('/files/save', 'Core/FileController::save', ['filter' => 'authguard:file_create']);
+$routes->post('/files/delete', 'Core/FileController::delete', ['filter' => 'authguard:file_delete']);
 
 
 
@@ -75,51 +99,45 @@ $routes->post('/linkedprofiles/delete', 'App/Linkedprofile/LinkedprofileControll
  * --------------------------------------------------------------------
  * Course Routing
  * --------------------------------------------------------------------*/
-$routes->get('/courses', 'App/Courses/CourseController::index', ['filter' => 'authguard:courses-r']);
+$routes->get('/courses', 'App/Courses/CourseController::index', ['filter' => 'authguard:course_management']);
 
-$routes->post('/courses/get', 'App/Courses/CourseController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/save', 'App/Courses/CourseController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/update', 'App/Courses/CourseController::update', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/delete', 'App/Courses/CourseController::delete', ['filter' => 'authguard:courses-d']);
+$routes->post('/courses/get', 'App/Courses/CourseController::get', ['filter' => 'authguard:course_view']);
+$routes->post('/courses/get/instructors', 'App/Courses/CourseController::getInstructors', ['filter' => 'authguard:course_update']);
 
-$routes->post('/courses/sections/get', 'App/Courses/SectionController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/save', 'App/Courses/SectionController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/update', 'App/Courses/SectionController::update', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/delete', 'App/Courses/SectionController::delete', ['filter' => 'authguard:courses-d']);
+$routes->post('/courses/save', 'App/Courses/CourseController::save', ['filter' => 'authguard:course_create']);
+$routes->post('/courses/update', 'App/Courses/CourseController::update', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/update/description', 'App/Courses/CourseController::updateDescription', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/update/instructor', 'App/Courses/CourseController::updateInstructor', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/delete', 'App/Courses/CourseController::delete', ['filter' => 'authguard:course_delete']);
 
-$routes->post('/courses/sections/lessons/get', 'App/Courses/LessonController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/lessons/save', 'App/Courses/LessonController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController::update', ['filter' => 'authguard:courses-w']);
-$routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController::delete', ['filter' => 'authguard:courses-d']);
-$routes->post('/courses/sections/lessonduration/get', 'App/Courses/LessonDurationController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/lessonduration/save', 'App/Courses/LessonDurationController::save', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/sections/lessonduration/update', 'App/Courses/LessonDurationController::update', ['filter' => 'authguard:courses-r']);
+$routes->post('/courses/sections/get', 'App/Courses/SectionController::get', ['filter' => 'authguard:course_view']);
+$routes->post('/courses/sections/save', 'App/Courses/SectionController::save', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/sections/update', 'App/Courses/SectionController::update', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/sections/delete', 'App/Courses/SectionController::delete', ['filter' => 'authguard:course_update']);
 
-$routes->post('/courses/instructors/get', 'App/Courses/InstructorController::get', ['filter' => 'authguard:courses_instructor-r']);
-$routes->post('/courses/instructors/get/trainers', 'App/Courses/InstructorController::getTrainersForLink', ['filter' => 'authguard:courses_instructor-w']);
-$routes->post('/courses/instructors/save', 'App/Courses/InstructorController::save', ['filter' => 'authguard:courses_instructor-w']);
-$routes->post('/courses/instructors/delete', 'App/Courses/InstructorController::delete', ['filter' => 'authguard:courses_instructor-d']);
+$routes->post('/courses/sections/lessons/get', 'App/Courses/LessonController::get', ['filter' => 'authguard:course_view']);
+$routes->post('/courses/sections/lessons/save', 'App/Courses/LessonController::save', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController::update', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController::delete', ['filter' => 'authguard:course_update']);
+
+// $routes->post('/courses/sections/lessonduration/get', 'App/Courses/LessonDurationController::get', ['filter' => 'authguard:courses-r']);
+// $routes->post('/courses/sections/lessonduration/save', 'App/Courses/LessonDurationController::save', ['filter' => 'authguard:courses-r']);
+// $routes->post('/courses/sections/lessonduration/update', 'App/Courses/LessonDurationController::update', ['filter' => 'authguard:courses-r']);
+
+$routes->get('/courses/enrollments/', 'App/Courses/EnrollmentController::index', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/course', 'App/Courses/EnrollmentController::getCourseEnrollments', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/course/reset', 'App/Courses/EnrollmentController::resetCourseEnrollments', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/user', 'App/Courses/EnrollmentController::getUserEnrollments', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/get/users', 'App/Courses/EnrollmentController::getUsersForEnroll', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/save', 'App/Courses/EnrollmentController::save', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/delete', 'App/Courses/EnrollmentController::delete', ['filter' => 'authguard:course_enroll_users']);
+$routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::acceptEnrollment', ['filter' => 'authguard:course_enroll']);
 
 
-$routes->post('/courses/reviews/get', 'App/Courses/ReviewController::get', ['filter' => 'authguard:courses_review-r']);
-$routes->post('/courses/reviews/save', 'App/Courses/ReviewController::save', ['filter' => 'authguard:courses_review-w']);
-$routes->post('/courses/reviews/delete', 'App/Courses/ReviewController::delete', ['filter' => 'authguard:courses_review-d']);
-
-
-$routes->post('/courses/followers/get', 'App/Courses/FollowerController::get', ['filter' => 'authguard:courses_follower-r']);
-$routes->post('/courses/followers/get/users', 'App/Courses/FollowerController::getUsersForLink', ['filter' => 'authguard:courses_follower-w']);
-$routes->post('/courses/followers/save', 'App/Courses/FollowerController::save', ['filter' => 'authguard:courses_follower-w']);
-$routes->post('/courses/followers/delete', 'App/Courses/FollowerController::delete', ['filter' => 'authguard:courses_follower-d']);
-
-$routes->get('/courses/enrollments/', 'App/Courses/CourseEnrollmentController::index', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/enrollments/get', 'App/Courses/CourseEnrollmentController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/enrollments/save', 'App/Courses/CourseEnrollmentController::save', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/enrollments/update', 'App/Courses/CourseEnrollmentController::update', ['filter' => 'authguard:courses-r']);
-
-$routes->get('/courses/payments/', 'App/Courses/CoursePaymentController::index', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/payments/get', 'App/Courses/CoursePaymentController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/payments/get/last', 'App/Courses/CoursePaymentController::getLastCoursePaymentByUser', ['filter' => 'authguard:courses-r']);
-$routes->post('/courses/payments/save', 'App/Courses/CoursePaymentController::save', ['filter' => 'authguard:courses-r']);
+// $routes->get('/courses/payments/', 'App/Courses/CoursePaymentController::index', ['filter' => 'authguard:courses-r']);
+// $routes->post('/courses/payments/get', 'App/Courses/CoursePaymentController::get', ['filter' => 'authguard:courses-r']);
+// $routes->post('/courses/payments/get/last', 'App/Courses/CoursePaymentController::getLastCoursePaymentByUser', ['filter' => 'authguard:courses-r']);
+// $routes->post('/courses/payments/save', 'App/Courses/CoursePaymentController::save', ['filter' => 'authguard:courses-r']);
 
 /*
  * --------------------------------------------------------------------
@@ -132,14 +150,14 @@ $routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard
 // $routes->post('/apps/chats/create', 'App/ChatController::save');
 
 
-/*
- * --------------------------------------------------------------------
- * Media Routing
- * --------------------------------------------------------------------*/
-$routes->get('/media', 'App/Media/MediaController::index', ['filter' => 'authguard:courses-r']);
-$routes->post('/media/get', 'App/Media/MediaController::get', ['filter' => 'authguard:courses-r']);
-$routes->post('/media/save', 'App/Media/MediaController::save', ['filter' => 'authguard:courses-w']);
-$routes->post('/media/delete', 'App/Media/MediaController::delete', ['filter' => 'authguard:courses-d']);
+
+
+
+
+
+
+
+
 
 /*
  * --------------------------------------------------------------------

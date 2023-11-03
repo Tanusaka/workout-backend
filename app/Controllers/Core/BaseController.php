@@ -39,7 +39,7 @@ class BaseController extends Controller
      * @var array
      */
     protected $errors  = [];
-    protected $helpers = ["form", "text"];
+    protected $helpers = ["form", "text", "date"];
 
     protected $appconfigs;
 	protected $validation;
@@ -93,7 +93,8 @@ class BaseController extends Controller
     {
         return [
             'status' => $status,
-            'messages' => $messages
+            'messages' => $messages,
+            'data' => $data
         ];
     }
 
@@ -107,5 +108,10 @@ class BaseController extends Controller
         } else {
             return true;
         }
+    }
+
+    protected function getCurrentDateTimeString() {
+        $time = Time::now();
+        return $time->toDateTimeString();
     }
 }

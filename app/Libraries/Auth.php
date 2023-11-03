@@ -89,8 +89,17 @@ class Auth {
             if ($guard == null) {
                 return static::$authmodel->getAllPermissions(self::email());
             } else {
-                return static::$authmodel->getGuardPermissions(self::email(), $guard);
+                return static::$authmodel->getGuardPermission(self::email(), $guard);
             }
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public static function getAuthUser($email=null)
+    {   
+        try {
+            return static::$authmodel->getAuthUser($email);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -194,25 +203,10 @@ class Auth {
         return is_null($token) ? false : ( self::getHeaderJWT() === $token ? true : false );
     }
 
-    public static function allows($guard=null)
+    public static function isAllowed($guard=null)
     {
         try {
-            $guardTokens = explode('-', $guard);
-            $permissions = self::getPermissions($guardTokens[0]);
-
-            if ( !is_null($permissions) ) {
-                if ($guardTokens[1] == 'r') {
-                    return $permissions->read;
-                } else if ($guardTokens[1] == 'w') {
-                    return $permissions->write;
-                } else if ($guardTokens[1] == 'd') {
-                    return $permissions->delete;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return static::getPermissions($guard);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -312,7 +306,7 @@ class Auth {
         if ( !self::hasToken() ) {
             throw new \Exception(self::HTTP_404);
         }
-
+        
         if ( self::isTokenExpired() ) {
             throw new \Exception(self::HTTP_401);
         }

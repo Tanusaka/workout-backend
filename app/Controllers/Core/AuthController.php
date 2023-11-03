@@ -37,12 +37,13 @@ class AuthController extends BaseController
 					$tokens = Auth::getTokens($credentials['email']);
 					
 					// $this->response->setCookie( Auth::getRefreshCookie($tokens['refreshToken']) );
+	
+					$authuser = Auth::getAuthUser($credentials['email']);
 
-					
-					$this->response->setJSON( [ 
-						'token' => $tokens['accessToken'],
-						'rtoken' => $tokens['refreshToken']
-					] );
+					$authuser['token'] = $tokens['accessToken'];
+					$authuser['rtoken'] = $tokens['refreshToken'];
+	
+					$this->response->setJSON($authuser);
 					
 					return $this->response;
 				

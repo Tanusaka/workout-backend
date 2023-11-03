@@ -99,6 +99,7 @@ defined('API_MSG_SUCCESS_LOGOUT_ALREADY')    || define('API_MSG_SUCCESS_LOGOUT_A
 defined('API_MSG_SUCCESS_USER_CREATED')           || define('API_MSG_SUCCESS_USER_CREATED', 'User has been created successfully.');
 defined('API_MSG_SUCCESS_USER_UPDATED')           || define('API_MSG_SUCCESS_USER_UPDATED', 'User has been updated successfully.');
 defined('API_MSG_SUCCESS_USER_PASSWORD_UPDATED')  || define('API_MSG_SUCCESS_USER_PASSWORD_UPDATED', 'User password has been updated successfully.');
+defined('API_MSG_SUCCESS_USER_DESCRIPTION_UPDATED')  || define('API_MSG_SUCCESS_USER_DESCRIPTION_UPDATED', 'User description has been updated successfully.');
 defined('API_MSG_SUCCESS_USER_ROLE_UPDATED')      || define('API_MSG_SUCCESS_USER_ROLE_UPDATED', 'User role has been updated successfully.');
 
 
@@ -110,8 +111,8 @@ defined('API_MSG_SUCCESS_ROLE_PERMISSIONS_UPDATED')     || define('API_MSG_SUCCE
 
 
 
-defined('API_MSG_SUCCESS_LINK_CREATED')           || define('API_MSG_SUCCESS_LINK_CREATED', 'User link has been created successfully.');
-defined('API_MSG_SUCCESS_LINK_DELETED')               || define('API_MSG_SUCCESS_LINK_DELETED', 'User link has been deleted successfully.');
+defined('API_MSG_SUCCESS_CONNECTION_CREATED')           || define('API_MSG_SUCCESS_CONNECTION_CREATED', 'User connection has been created successfully.');
+defined('API_MSG_SUCCESS_CONNECTION_DELETED')               || define('API_MSG_SUCCESS_CONNECTION_DELETED', 'User connection has been deleted successfully.');
 
 
 
@@ -134,7 +135,8 @@ defined('API_MSG_SUCCESS_LESSON_DURATION_UPDATED')   || define('API_MSG_SUCCESS_
 defined('API_MSG_ERROR_LESSON_DURATION_UPDATED')   || define('API_MSG_ERROR_LESSON_DURATION_UPDATED', 'Error in Lesson Duration Valuse.');
 
 defined('API_MSG_SUCCESS_COURSE_ENROLLED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED', 'Course Enrollment has been created successfully.');
-defined('API_MSG_SUCCESS_COURSE_ENROLL_UPDATED')   || define('API_MSG_SUCCESS_COURSE_ENROLL_UPDATED', 'Course Enrollment has been updated successfully.');
+defined('API_MSG_SUCCESS_COURSE_ENROLLED_DELETED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_DELETED', 'Course Enrollment has been deleted successfully.');
+defined('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED', 'Course Enrollment has been updated successfully.');
 
 defined('API_MSG_SUCCESS_COURSE_PAID')   || define('API_MSG_SUCCESS_COURSE_PAID', 'Course Payment has been created successfully.');
 
@@ -170,5 +172,5 @@ defined('ER_MSG_INVALID_REQUEST')            || define('ER_MSG_INVALID_REQUEST',
 
 defined('SC_MSG_USR_LOGOUT')                 || define('SC_MSG_USR_LOGOUT', 'User has been logged out successfully.');
 
-defined('API_MSG_SUCCESS_MEDIA_CREATED')     || define('API_MSG_SUCCESS_MEDIA_CREATED', 'Media file has been created successfully.');
-defined('API_MSG_SUCCESS_MEDIA_DELETED')     || define('API_MSG_SUCCESS_MEDIA_DELETED', 'Media file has been deleted successfully.');
+defined('API_MSG_SUCCESS_FILE_CREATED')     || define('API_MSG_SUCCESS_FILE_CREATED', 'File has been created successfully.');
+defined('API_MSG_SUCCESS_FILE_DELETED')     || define('API_MSG_SUCCESS_FILE_DELETED', 'File file has been deleted successfully.');
