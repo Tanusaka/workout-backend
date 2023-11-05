@@ -40,8 +40,7 @@ class FileModel extends BaseModel
             $files = 
             $this->db->table('_files')->select('id, tenantid, rootdir, path, name, type, ext, size, 
             displayname, filedescription, sharelink, download, accesslevel, status, 
-            createdat, createdby, updatedat, updatedby')
-            ->where('tenantid', 1);
+            createdat, createdby, updatedat, updatedby');
 
             if (isset($filters) && !empty($filters)) {
                 foreach ($filters as $key => $value) {

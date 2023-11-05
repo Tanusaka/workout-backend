@@ -51,8 +51,10 @@ class UserController extends AuthController
                 return $this->respond($this->errorResponse(404,"User cannot be found."), 404);
             }
 
-            $user['connections'] = $this->connectionmodel->getUserConnections($id);
-
+            if ($user['rolename']!='Super Administrator' && $user['rolename']!='Administrator') {
+                $user['connections'] = $this->connectionmodel->getUserConnections($id);
+            }
+            
             return $this->respond($this->successResponse(200, "", $user), 200);
 
         } catch (\Exception $e) {
@@ -74,6 +76,10 @@ class UserController extends AuthController
 
             if ( empty($user) ) {
                 return $this->respond($this->errorResponse(404,"User Profile cannot be found."), 404);
+            }
+
+            if ($user['rolename']!='Super Administrator' && $user['rolename']!='Administrator') {
+                $user['connections'] = $this->connectionmodel->getUserConnections($id);
             }
 
             return $this->respond($this->successResponse(200, "", $user), 200);

@@ -58,10 +58,13 @@ $routes->post('/users/update/role', 'Core/UserController::updateRole', ['filter'
 $routes->post('/users/update/password', 'Core/UserController::updatePassword', ['filter' => 'authguard:user_update_password']);
 $routes->post('/users/update/description', 'Core/UserController::updateDescription', ['filter' => 'authguard:user_update_profile']);
 
-// $routes->post('/users/get/connections', 'Core/UserController::getUserConnections', ['filter' => 'authguard:user_view_connections']);
-// $routes->post('/users/add/connections', 'Core/UserController::addUserConnections', ['filter' => 'authguard:user_add_connections']);
-$routes->post('/users/add/connections', 'Core/ConnectionController::save', ['filter' => 'authguard:user_add_connections']);
-$routes->post('/users/delete/connections', 'Core/ConnectionController::delete', ['filter' => 'authguard:user_delete_connections']);
+$routes->post('/users/get/connections', 'Core/ConnectionController::get', ['filter' => 'authguard:user_view_connections']);
+$routes->post('/users/get/connections/trainer', 'Core/ConnectionController::getTrainerConnections', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/get/connections/student', 'Core/ConnectionController::getStudentConnections', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/get/connections/parent', 'Core/ConnectionController::getParentConnections', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/get/connections/allroles', 'Core/ConnectionController::getUserRoleConnections', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/add/connection', 'Core/ConnectionController::save', ['filter' => 'authguard:user_add_connections']);
+$routes->post('/users/delete/connection', 'Core/ConnectionController::delete', ['filter' => 'authguard:user_delete_connections']);
 
 
 /*
@@ -75,24 +78,12 @@ $routes->post('/roles/permissions/update', 'Core/RoleController::updatePermissio
 
 /*
  * --------------------------------------------------------------------
- * Connection Management Routing
- * --------------------------------------------------------------------*/
-// $routes->post('/connections/get', 'Core/ConnectionController::get', ['filter' => 'authguard:user_view_connections']);
-// $routes->post('/linkedprofiles/get/users', 'App/Linkedprofile/LinkedprofileController::getUsersForLink', ['filter' => 'authguard:users-r']);
-// $routes->post('/linkedprofiles/save', 'App/Linkedprofile/LinkedprofileController::save', ['filter' => 'authguard:users-w']);
-// $routes->post('/linkedprofiles/delete', 'App/Linkedprofile/LinkedprofileController::delete', ['filter' => 'authguard:users-w']);
-
-
-
-/*
- * --------------------------------------------------------------------
  * File Management Routing
  * --------------------------------------------------------------------*/
 $routes->get('/files', 'Core/FileController::index', ['filter' => 'authguard:file_management']);
 $routes->post('/files/get', 'Core/FileController::get', ['filter' => 'authguard:file_view']);
 $routes->post('/files/save', 'Core/FileController::save', ['filter' => 'authguard:file_create']);
 $routes->post('/files/delete', 'Core/FileController::delete', ['filter' => 'authguard:file_delete']);
-
 
 
 /*
@@ -148,10 +139,6 @@ $routes->post('/chats', 'App/ChatController::index', ['filter' => 'authguard:cou
 $routes->post('/chats/get', 'App/ChatController::retrieveChatThread', ['filter' => 'authguard:courses-r']);
 $routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard:courses-r']);
 // $routes->post('/apps/chats/create', 'App/ChatController::save');
-
-
-
-
 
 
 

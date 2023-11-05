@@ -87,10 +87,109 @@ class ConnectionModel extends Model
 		}
 	}
 
+	public function getUserRoleConnections($userid=0, $rolename="") {
+		try {
+
+			if ($rolename=="Trainer") {
+				$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND (_users.roleid='4' OR _users.roleid='5')";
+			} elseif ($rolename=="Student") {
+				$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND (_users.roleid='3' OR _users.roleid='5')";
+			} elseif ($rolename=="Parent") {
+				$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND (_users.roleid='3' OR _users.roleid='4')";
+			} else {
+				$where = '';
+			}
+        
+			$users = 
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			->join('_roles', '_roles.id = _users.roleid')
+			->join('_files', '_files.id = _users.profileimageid', 'left')
+			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left');
+
+			if ($where!='') {
+				return $users->where($where)->get()->getResultArray();
+			}
+			
+			return [];
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
+	public function getTrainerConnections($userid=0) {
+		try {
+
+			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='3'";
+        
+			$users = 
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			->join('_roles', '_roles.id = _users.roleid')
+			->join('_files', '_files.id = _users.profileimageid', 'left')
+			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')
+			->where($where)
+			->get()->getResultArray();
+
+			return $users;
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
+	public function getStudentConnections($userid=0) {
+		try {
+
+			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='4'";
+        
+			$users = 
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			->join('_roles', '_roles.id = _users.roleid')
+			->join('_files', '_files.id = _users.profileimageid', 'left')
+			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')
+			->where($where)
+			->get()->getResultArray();
+
+			return $users;
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
+	public function getParentConnections($userid=0) {
+		try {
+
+			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='5'";
+        
+			$users = 
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			->join('_roles', '_roles.id = _users.roleid')
+			->join('_files', '_files.id = _users.profileimageid', 'left')
+			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')
+			->where($where)
+			->get()->getResultArray();
+
+			return $users;
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
     public function saveConnection($data=[])
     {
 		return is_null($data) ? false : ( $this->insertBatch($data) ? true : false );
     }
+
+	public function deleteConnections($data=[])
+	{
+		if (!empty($data)) {
+			return $this->delete($data);
+		} 
+
+		return false;
+	}
 
 
 }

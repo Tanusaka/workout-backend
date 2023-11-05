@@ -21,11 +21,14 @@ class FileController extends AuthController
     public function index()
     {
         $filters = [
-            '_uploads.type' => '',
-            '_uploads.ext' => '',
-            '_uploads.size' => '',
-            '_files.status' => '',
-            '_files.createdby' => $this->getAuthID()
+            'tenantid' => '1',
+            'rootdir' => 'public',
+            'type' => '',
+            'ext' => '',
+            'download' => '',
+            'accesslevel' => '',
+            'status' => '',
+            'createdby' => $this->getAuthID()
         ];
 
         return $this->respond($this->successResponse(200, "", $this->filemodel->getFiles($filters)), 200);
@@ -92,24 +95,30 @@ class FileController extends AuthController
         }
 	}
 
-    public function delete() {
+    public function delete() 
+    {
         $this->setValidationRules('delete');
 
-        if ( $this->isValid() ) {           
-        
-            $id = trim($this->request->getVar('id'));
+        if ( $this->isValid() ) {    
+            
+            $files = trim($this->request->getVar('files'));
 
-            $file = $this->filemodel->find($id);
+            $files = explode ("-", $files); $links = [];
+            
+            foreach ($files as $id) {
+				
+				$file = $this->filemodel->find($id); 
+				
+				if (!empty($file) && $this->filemodel->delete([ 'id' => $file['id'] ])) {
+                    array_push($links, $file['path'].$file['name']);
+				}
+			}
 
-            if ( empty($file) ) {
-                return $this->respond($this->errorResponse(404,"File cannot be found."), 404);
-            }
-
-			if ( !$this->filemodel->delete($id) ) {
+			if ( empty($links) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_FILE_DELETED), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_FILE_DELETED, ['links' => $links]), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -147,8 +156,8 @@ class FileController extends AuthController
             ]);
         } elseif ( $type == 'delete' ) {
             $this->validation->setRules([
-                'id' => [
-                    'label'  => 'File ID',
+                'files' => [
+                    'label'  => 'Files',
                     'rules'  => 'required'
                 ]
             ]);
