@@ -53,6 +53,68 @@ class LessonController extends CourseController
         }
     }
 
+    public function getPrevious()
+    {
+        try {
+            $courseid = $this->request->getVar('courseid');
+            $currentid = $this->request->getVar('currentid');
+
+            if ( !isset($courseid) || !isset($currentid)) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $lesson = $this->lessonmodel->getPreviousLesson($courseid, $currentid);
+
+            if ( is_null($lesson) ) {
+                return $this->respond($this->errorResponse(404,"There is no previous lesson."), 404);
+            }
+
+            $paymentInfo = $this->getCoursePaymentInfo($lesson['courseid']);
+
+            if(!$paymentInfo['paymentrequired']) {
+                return $this->respond($this->successResponse(200, "", $lesson), 200);
+            } else {
+                return $this->respond($this->errorResponse(402,"Payment Required.",
+                ['paymentinfo'=>$paymentInfo]), 402);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
+    }
+
+    public function getNext()
+    {
+        try {
+            $courseid = $this->request->getVar('courseid');
+            $currentid = $this->request->getVar('currentid');
+
+            if ( !isset($courseid) || !isset($currentid)) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $lesson = $this->lessonmodel->getNextLesson($courseid, $currentid);
+
+            if ( is_null($lesson) ) {
+                return $this->respond($this->errorResponse(404,"There is no next lesson."), 404);
+            }
+
+            $paymentInfo = $this->getCoursePaymentInfo($lesson['courseid']);
+
+            if(!$paymentInfo['paymentrequired']) {
+                return $this->respond($this->successResponse(200, "", $lesson), 200);
+            } else {
+                return $this->respond($this->errorResponse(402,"Payment Required.",
+                ['paymentinfo'=>$paymentInfo]), 402);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
+    }
+
     public function save()
 	{
 		$this->setValidationRules('save');

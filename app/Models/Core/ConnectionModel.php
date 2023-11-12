@@ -51,17 +51,34 @@ class ConnectionModel extends Model
 		try {
 			
 			$connections = 
-			$this->db->table('_connections')->select('_connections.id, _connections.userid, _connections.connid, _users.firstname, _users.lastname, CONCAT(_files.path, _files.name) AS profileimage, _connections.contype')
+			$this->db->table('_connections')->select('_connections.id, _connections.userid, _connections.connid, _users.firstname, _users.lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _connections.contype')
 			->join('_users', '_users.id = _connections.connid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->where('_connections.tenantid', 1)
 			->where('_connections.status', 'A')
 			->where('_connections.userid', $userid);
 			
-			// if ($except > 0) {
-			// $connections->where('_users.id !=', $except);
-			// }
 
+			return $connections->get()->getResultArray();
+
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
+	public function getUserConnectionsForChat($userid=0) {
+		try {
+			
+			$where = "chat_members.connid IS NULL AND _connections.tenantid='1' AND _connections.status='A' AND _connections.userid='".$userid."'";
+
+			$connections = 
+			$this->db->table('_connections')->select('_connections.id, _connections.connid, _roles.rolename, _users.firstname, _users.lastname, CONCAT(_files.path, _files.name) AS profileimage, _connections.contype')
+			->join('chat_members', 'chat_members.userid = _connections.userid AND chat_members.connid = _connections.connid', 'left')
+			->join('_users', '_users.id = _connections.connid')
+			->join('_roles', '_roles.id = _users.roleid')
+			->join('_files', '_files.id = _users.profileimageid', 'left')
+			->where($where);
+		
 			return $connections->get()->getResultArray();
 
 		} catch (\Exception $e) {
@@ -73,7 +90,7 @@ class ConnectionModel extends Model
 		try {
 			
 			$connection = 
-			$this->db->table('_connections')->select('_connections.id, _connections.userid, _connections.connid, _users.firstname, _users.lastname, CONCAT(_files.path, _files.name) AS profileimage, _connections.contype')
+			$this->db->table('_connections')->select('_connections.id, _connections.userid, _connections.connid, _users.firstname, _users.lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _connections.contype')
 			->join('_users', '_users.id = _connections.connid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->where('_connections.tenantid', $tenantid)
@@ -101,7 +118,7 @@ class ConnectionModel extends Model
 			}
         
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left');
@@ -123,7 +140,7 @@ class ConnectionModel extends Model
 			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='3'";
         
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')
@@ -143,7 +160,7 @@ class ConnectionModel extends Model
 			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='4'";
         
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')
@@ -163,7 +180,7 @@ class ConnectionModel extends Model
 			$where = "_connections.userid IS NULL AND _users.tenantid='1' AND _users.status='A' AND _users.roleid='5'";
         
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+			$this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->join('_connections', '_connections.connid = _users.id AND _connections.userid = '.$userid, 'left')

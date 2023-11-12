@@ -69,7 +69,7 @@ class EnrollmentModel extends Model
       $where = "course_enrollments.courseid = " . $this->escape($courseid) . " AND (_users.status='P' OR _users.status='A')";
 
       $enrollments = 
-      $this->db->table('course_enrollments')->select('course_enrollments.id,course_enrollments.courseid,course_enrollments.userid, _users.firstname, _users.lastname, CONCAT(_files.path, _files.name) AS profileimage, _roles.rolename, course_enrollments.enrolleddate, course_enrollments.status')
+      $this->db->table('course_enrollments')->select('course_enrollments.id,course_enrollments.courseid,course_enrollments.userid, _users.firstname, _users.lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _roles.rolename, course_enrollments.enrolleddate, course_enrollments.status')
       ->join('_users', '_users.id = course_enrollments.userid')
       ->join('_files', '_files.id = _users.profileimageid', 'left')
       ->join('_roles', '_roles.id = _users.roleid')
@@ -94,7 +94,7 @@ class EnrollmentModel extends Model
       $where = "course_enrollments.userid = " . $this->escape($userid) . " AND (_users.status='P' OR _users.status='A')";
       
       $enrollments = 
-      $this->db->table('course_enrollments')->select('course_enrollments.id,courseid,userid, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, enrolleddate, course_enrollments.status')
+      $this->db->table('course_enrollments')->select('course_enrollments.id,courseid,userid, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, enrolleddate, course_enrollments.status')
       ->join('_users', '_users.id = course_enrollments.userid')
       ->join('_files', '_files.id = _users.profileimageid', 'left')
       ->where($where)
@@ -114,7 +114,7 @@ class EnrollmentModel extends Model
         $where = "course_enrollments.userid IS NULL AND _users.tenantid='1' AND (_users.status='P' OR _users.status='A') AND (_users.roleid='4' OR _users.roleid='5')";
         
         $users = 
-        $this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
+        $this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage, _users.status')
         ->join('_roles', '_roles.id = _users.roleid')
         ->join('_files', '_files.id = _users.profileimageid', 'left')
         ->join('course_enrollments', 'course_enrollments.userid = _users.id AND course_enrollments.courseid = '.$courseid, 'left')

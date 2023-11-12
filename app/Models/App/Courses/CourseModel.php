@@ -46,7 +46,7 @@ class CourseModel extends Model
 
       $courses = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')
@@ -69,7 +69,7 @@ class CourseModel extends Model
 
       $courses = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')
@@ -93,7 +93,7 @@ class CourseModel extends Model
  
       $courses = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
@@ -119,7 +119,7 @@ class CourseModel extends Model
 
       $course = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')
@@ -139,7 +139,7 @@ class CourseModel extends Model
 
       $course = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')
@@ -160,7 +160,7 @@ class CourseModel extends Model
  
     $course = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')

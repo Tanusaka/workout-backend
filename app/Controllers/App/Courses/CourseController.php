@@ -13,7 +13,7 @@ use App\Models\App\Courses\SectionModel;
 use App\Models\App\Courses\LessonModel;
 use App\Models\App\Courses\ReviewModel;
 use App\Models\App\Courses\EnrollmentModel;
-use App\Models\App\Courses\CoursePaymentsModel;
+use App\Models\App\Courses\PaymentModel;
 
 
 class CourseController extends AuthController
@@ -24,7 +24,7 @@ class CourseController extends AuthController
     protected $enrollmentmodel;
     protected $usermodel;
     protected $rolemodel;
-    protected $coursepaymentsmodel;
+    protected $paymentmodel;
 
     public function __construct() {
         parent::__construct();
@@ -34,7 +34,7 @@ class CourseController extends AuthController
         $this->enrollmentmodel = new EnrollmentModel();
         $this->usermodel = new UserModel();
         $this->rolemodel = new RoleModel();
-        $this->coursepaymentsmodel = new CoursePaymentsModel();
+        $this->paymentmodel = new PaymentModel();
         // $reviewmodel = new ReviewModel();
     }
 
@@ -457,7 +457,7 @@ class CourseController extends AuthController
 
         if ($course['priceplan']=="OneTime") {
             
-            $coursePayment = $this->coursepaymentsmodel->getLastCoursePaymentByUser($user_id, $course['id']);
+            $coursePayment = $this->paymentmodel->getLastPayment($user_id, $course['id']);
             
             if(!empty($coursePayment)) {
                 return false;
@@ -467,11 +467,11 @@ class CourseController extends AuthController
 
         } else if ($course['priceplan']=="Monthly") {
             
-            $coursePayment = $this->coursepaymentsmodel->getLastCoursePaymentByUser($user_id, $course['id']);
+            $coursePayment = $this->paymentmodel->getLastPayment($user_id, $course['id']);
 
             if(!empty($coursePayment)) {
                 $currentDateTime = new DateTime();
-                $lastPaymentDateTime = new DateTime($coursePayment['CreatedAt']);
+                $lastPaymentDateTime = new DateTime($coursePayment['createdat']);
 
                 $interval = $currentDateTime->diff($lastPaymentDateTime);
 
@@ -488,11 +488,11 @@ class CourseController extends AuthController
             
         } else if ($course['priceplan']=="Yearly") {
             
-            $coursePayment = $this->coursepaymentsmodel->getLastCoursePaymentByUser($user_id, $course['id']);
+            $coursePayment = $this->paymentmodel->getLastPayment($user_id, $course['id']);
             
             if(!empty($coursePayment)){
                 $currentDateTime = new DateTime();
-                $lastPaymentDateTime = new DateTime($coursePayment['CreatedAt']);
+                $lastPaymentDateTime = new DateTime($coursePayment['createdat']);
 
                 $interval = $currentDateTime->diff($lastPaymentDateTime);
 

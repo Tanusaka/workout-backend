@@ -141,6 +141,8 @@ defined('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED')   || define('API_MSG_SUCCESS_
 defined('API_MSG_SUCCESS_COURSE_PAID')   || define('API_MSG_SUCCESS_COURSE_PAID', 'Course Payment has been created successfully.');
 
 defined('API_MSG_SUCCESS_CHAT_CREATED')      || define('API_MSG_SUCCESS_CHAT_CREATED', 'Chat has been created successfully.');
+defined('API_MSG_SUCCESS_CHAT_UPDATED')      || define('API_MSG_SUCCESS_CHAT_UPDATED', 'Chat has been updated successfully.');
+defined('API_MSG_SUCCESS_CHAT_DELETED')      || define('API_MSG_SUCCESS_CHAT_DELETED', 'Chat has been deleted successfully.');
 
 
 defined('API_MSG_SUCCESS_INSTRUCTOR_CREATED') || define('API_MSG_SUCCESS_INSTRUCTOR_CREATED', 'Instructor has been added successfully.');

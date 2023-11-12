@@ -107,6 +107,8 @@ $routes->post('/courses/sections/update', 'App/Courses/SectionController::update
 $routes->post('/courses/sections/delete', 'App/Courses/SectionController::delete', ['filter' => 'authguard:course_update']);
 
 $routes->post('/courses/sections/lessons/get', 'App/Courses/LessonController::get', ['filter' => 'authguard:course_view']);
+$routes->post('/courses/sections/lessons/get/next', 'App/Courses/LessonController::getNext', ['filter' => 'authguard:course_view']);
+$routes->post('/courses/sections/lessons/get/previous', 'App/Courses/LessonController::getPrevious', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/lessons/save', 'App/Courses/LessonController::save', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController::update', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController::delete', ['filter' => 'authguard:course_update']);
@@ -124,6 +126,7 @@ $routes->post('/courses/enrollments/save', 'App/Courses/EnrollmentController::sa
 $routes->post('/courses/enrollments/delete', 'App/Courses/EnrollmentController::delete', ['filter' => 'authguard:course_enroll_users']);
 $routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::acceptEnrollment', ['filter' => 'authguard:course_enroll']);
 
+$routes->post('/courses/payment/create', 'App/Courses/PaymentController::save', ['filter' => 'authguard:course_enroll']);
 
 // $routes->get('/courses/payments/', 'App/Courses/CoursePaymentController::index', ['filter' => 'authguard:courses-r']);
 // $routes->post('/courses/payments/get', 'App/Courses/CoursePaymentController::get', ['filter' => 'authguard:courses-r']);
@@ -134,12 +137,14 @@ $routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::
  * --------------------------------------------------------------------
  * Chats Routing
  * --------------------------------------------------------------------*/
-$routes->post('/chats', 'App/ChatController::index', ['filter' => 'authguard:courses-r']);
+$routes->get('/chats', 'App/Chats/ChatController::index', ['filter' => 'authguard:chat_management']);
+$routes->post('/chats/get', 'App/Chats/ChatController::get', ['filter' => 'authguard:chat_management']);
 
-$routes->post('/chats/get', 'App/ChatController::retrieveChatThread', ['filter' => 'authguard:courses-r']);
-$routes->post('/chats/save', 'App/ChatController::save', ['filter' => 'authguard:courses-r']);
-// $routes->post('/apps/chats/create', 'App/ChatController::save');
 
+$routes->post('/chats/save/personal', 'App/Chats/ChatController::savePersonalChat', ['filter' => 'authguard:chat_create']);
+$routes->post('/chats/delete/personal', 'App/Chats/ChatController::deletePersonalChat', ['filter' => 'authguard:chat_delete']);
+$routes->post('/chats/save/personal/message', 'App/Chats/ChatController::savePersonalChatMessage', ['filter' => 'authguard:chat_create']);
+$routes->post('/chats/get/personal/connections', 'App/Chats/ChatController::getPersonalChatConnections', ['filter' => 'authguard:chat_create']);
 
 
 
