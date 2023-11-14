@@ -40,6 +40,7 @@ class ChatController extends ConnectionController
                 $chat['name'] = $connmember['firstname'].' '.$connmember['lastname'];
                 $chat['chatimage'] = $connmember['profileimage'];
                 $chat['about'] = $connmember['rolename'];
+                $chat['active'] = $connmember['active'];
             } 
             
             array_push($allChats, $chat);
@@ -74,6 +75,7 @@ class ChatController extends ConnectionController
                 $chat['name'] = $connmember['firstname'].' '.$connmember['lastname'];
                 $chat['chatimage'] = $connmember['profileimage'];
                 $chat['about'] = $connmember['rolename'];
+                $chat['active'] = $connmember['active'];
             } 
 
             $chat['members'] = $this->chatmembermodel->getChatMembers($chatid);
