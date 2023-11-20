@@ -93,6 +93,15 @@ class AuthModel extends Model
     }
   }
 
+  public function getAuthRole($email=null) {
+    try {
+      $roleid = $this->getAuthRoleID($email);
+      return $this->db->table('_roles')->select('rolename')->where('_roles.id', $roleid)->get()->getRowArray();
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
+    }
+  }
+
   public function getAccessToken($email=null)
   {
     try {

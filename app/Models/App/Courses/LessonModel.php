@@ -45,7 +45,7 @@ class LessonModel extends Model
       try {
 
         $lessons = 
-        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
         _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
@@ -67,7 +67,7 @@ class LessonModel extends Model
       try {
 
         $lesson = 
-        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
         _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
@@ -93,10 +93,14 @@ class LessonModel extends Model
         ->join('courses', 'courses.id = course_sections.courseid')
         ->where('courses.id', $courseid)
         ->where('course_lessons.id >', $current)
-        ->orderBy('course_lessons.id', 'ASC')
+        ->orderBy('course_lessons.sectionid ASC, course_lessons.id ASC')
         ->limit(1);
+
+        $next = $lesson->get()->getRowArray();
+
+        // print_r('<pre>');print_r($this->getLastQuery()->getQuery());print_r('</pre>');die;
   
-        return $lesson->get()->getRowArray();
+        return $next;
   
       } catch (\Exception $e) {
         throw new \Exception($e->getMessage());
@@ -124,6 +128,17 @@ class LessonModel extends Model
       } catch (\Exception $e) {
         throw new \Exception($e->getMessage());
       } 
+  }
+
+  public function getLessonOrderID($sectionid=0) {
+    
+    $lastLesson = $this->where('sectionid', $sectionid)->orderBy('lessonorder', 'DESC')->limit(1)->get()->getRowArray();
+    
+    if (!empty($lastLesson)) {
+      return $lastLesson['lessonorder']+1;
+    }
+
+    return 1;
   }
 
   public function saveLesson($data=[])

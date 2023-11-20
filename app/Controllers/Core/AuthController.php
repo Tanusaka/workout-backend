@@ -135,6 +135,11 @@ class AuthController extends BaseController
 		return Auth::getAuthRoleID();
 	}
 
+	public function getAuthRole()
+	{
+		return Auth::getAuthRole();
+	}
+
 	private function setValidationRules($type='')
     {
         if ( $type == 'signup' ) {

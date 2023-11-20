@@ -136,7 +136,8 @@ defined('API_MSG_ERROR_LESSON_DURATION_UPDATED')   || define('API_MSG_ERROR_LESS
 
 defined('API_MSG_SUCCESS_COURSE_ENROLLED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED', 'Course Enrollment has been created successfully.');
 defined('API_MSG_SUCCESS_COURSE_ENROLLED_DELETED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_DELETED', 'Course Enrollment has been deleted successfully.');
-defined('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED', 'Course Enrollment has been updated successfully.');
+defined('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED', 'You have been enrolled successfully.');
+defined('API_MSG_SUCCESS_COURSE_ENROLLED_COUPON_UPDATED')   || define('API_MSG_SUCCESS_COURSE_ENROLLED_COUPON_UPDATED', 'Course Enrollment Coupon has been updated successfully.');
 
 defined('API_MSG_SUCCESS_COURSE_PAID')   || define('API_MSG_SUCCESS_COURSE_PAID', 'Course Payment has been created successfully.');
 

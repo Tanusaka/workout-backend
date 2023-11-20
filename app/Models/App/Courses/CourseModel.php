@@ -33,148 +33,72 @@ class CourseModel extends Model
   // protected $beforeDelete         = [];
   // protected $afterDelete          = [];
 
+  private static $authrolename;
+  private static $authuserid;
+
+
+  public function __construct($authrolename='', $authuserid=0) {
+    parent::__construct();
+    self::$authrolename = $authrolename;
+    self::$authuserid = $authuserid;
+  }
 
   protected function setStatus(array $data)
   {   
-    $data['data']['status'] = 'A';
+    $data['data']['status'] = 'I';
     return $data;
   }
 
-  public function getCourses($status='')
+  public function getCourses()
   {
     try {
+
+      if ( self::$authrolename  == 'Trainer' ) {
+        $where = "courses.tenantid='1' AND courses.instructorprofile='".self::$authuserid."' AND (courses.status='A' OR courses.status='I')";
+      } elseif ( self::$authrolename == 'Administrator' || self::$authrolename == 'Super Administrator') {
+        $where = "courses.tenantid='1' AND (courses.status='A' OR courses.status='I')";
+      } else {
+        $where = "courses.tenantid='1' AND courses.status='A'";
+      }
 
       $courses = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
       courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1);
-      
-      if ($status!='') {
-        $courses->where('courses.status', $status);
-      }
+      ->join('_files', '_files.id = courses.courseimageid', 'left')->where($where);
 
       return $courses->get()->getResultArray();
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }  
-  }
-
-  public function getCoursesByTrainer($trainerid=0, $status='')
-  {
-    try {
-
-      $courses = 
-      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
-      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
-      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1)
-      ->where('instructorprofile', $trainerid);
-      
-      if ($status!='') {
-        $courses->where('courses.status', $status);
-      }
-
-      return $courses->get()->getResultArray();
-
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
-  }
-
-  public function getCoursesByEnrollment($userid=0, $status='')
-  {
-    try {
- 
-      $courses = 
-      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
-      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
-      course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
-      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('course_enrollments', 'course_enrollments.courseid = courses.id')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1)
-      ->where('course_enrollments.userid', $userid);
-      
-      if ($status!='') {
-        $courses->where('courses.status', $status);
-      }
-
-      return $courses->get()->getResultArray();
-
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
   }
 
   public function getCourse($id=0)
   {
     try {
 
-      $course = 
-      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
-      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
-      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1)
-      ->where('courses.id', $id);
-
-      return $course->get()->getRowArray();
-
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }  
-  }
-
-  public function getCourseByTrainer($id=0, $trainerid=0)
-  {
-    try {
+      if ( self::$authrolename  == 'Trainer' ) {
+        $where = "courses.tenantid='1' AND courses.id='".$id."' AND courses.instructorprofile='".self::$authuserid."' AND (courses.status='A' OR courses.status='I')";
+      } elseif ( self::$authrolename == 'Administrator' || self::$authrolename == 'Super Administrator') {
+        $where = "courses.tenantid='1' AND courses.id='".$id."' AND (courses.status='A' OR courses.status='I')";
+      } else {
+        $where = "courses.tenantid='1' AND courses.id='".$id."' AND courses.status='A'";
+      }
 
       $course = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
       courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1)
-      ->where('courses.id', $id)
-      ->where('instructorprofile', $trainerid);
+      ->join('_files', '_files.id = courses.courseimageid', 'left')->where($where);
 
       return $course->get()->getRowArray();
 
     } catch (\Exception $e) {
       throw new \Exception($e->getMessage());
     }  
-  }
-
-  public function getCourseByEnrollment($id=0, $userid=0)
-  {
-    try {
- 
-    $course = 
-      $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
-      courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
-      course_enrollments.id AS enrollmentid, course_enrollments.status AS enrolled, course_enrollments.enrolleddate,
-      courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
-      ->join('course_enrollments', 'course_enrollments.courseid = courses.id')
-      ->join('_files', '_files.id = courses.courseimageid', 'left')
-      ->where('courses.tenantid', 1)
-      ->where('courses.id', $id)
-      ->where('course_enrollments.userid', $userid);
-      
-      return $course->get()->getRowArray();
-
-    } catch (\Exception $e) {
-      throw new \Exception($e->getMessage());
-    }
   }
 
   public function saveCourse($data=[])

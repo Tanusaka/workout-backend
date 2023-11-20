@@ -7,23 +7,20 @@ namespace App\Controllers\App\Courses;
 
 use App\Controllers\App\Courses\CourseController;
 use App\Models\App\Courses\EnrollmentModel;
+use App\Models\App\Courses\EnrollmentcouponModel;
 
 class EnrollmentController extends CourseController
 {
     protected $enrollmentmodel;
+    protected $enrollmentcouponmodel;
 
     public function __construct() {
         parent::__construct();
         $this->enrollmentmodel = new EnrollmentModel();
+        $this->enrollmentcouponmodel = new EnrollmentcouponModel();
     }
 
-    public function index()
-    {
-        $user_id = $this->getAuthID();
-        return $this->respond($this->successResponse(200, "", $this->enrollmentmodel->getEnrollments()), 200);
-    }
-
-    public function getCourseEnrollments()
+    public function get()
     {
         try {
 
@@ -33,69 +30,10 @@ class EnrollmentController extends CourseController
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $enrollments = $this->enrollmentmodel->getCourseEnrollments($course_id);
+            $enrollments['coupon'] = $this->enrollmentcouponmodel->getCouponByCourse($course_id);
+            $enrollments['enrollments'] = $this->enrollmentmodel->getEnrollments($course_id);
 
             return $this->respond($this->successResponse(200, "", $enrollments), 200);
-
-        } catch (\Exception $e) {
-            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-        }
-    }
-
-    public function resetCourseEnrollments()
-    {
-        try {
-
-            $course_id = $this->request->getVar('courseid');
-
-            if ( !isset($course_id) ) {
-                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
-            }
-
-            $enrollments = $this->enrollmentmodel->getCourseEnrollments($course_id, 10);
-
-            return $this->respond($this->successResponse(200, "", $enrollments), 200);
-
-        } catch (\Exception $e) {
-            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-        }
-    }
-
-    public function getUserEnrollments()
-    {
-        try {
-
-            $user_id = $this->request->getVar('userid');
-
-            if ( !isset($user_id) ) {
-                $user_id = $this->getAuthID();
-            }
-
-            $enrollments = $this->enrollmentmodel->getUserEnrollments($user_id);
-
-            return $this->respond($this->successResponse(200, "", $enrollments), 200);
-
-        } catch (\Exception $e) {
-            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-        }
-    }
-
-    public function getUsersForEnroll()
-    {
-        try {
-
-            $course_id = $this->request->getVar('courseid');
-
-            if ( !isset($course_id) ) {
-                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
-            }
-
-            $usersForEnroll = $this->enrollmentmodel->getUsersForEnroll($course_id);
-
-            return $this->respond($this->successResponse(200, "", $usersForEnroll), 200);
 
         } catch (\Exception $e) {
             log_message('error', '[ERROR] {exception}', ['exception' => $e]);
@@ -109,18 +47,18 @@ class EnrollmentController extends CourseController
 
         if ( $this->isValid() ) {           
         
-			$courseEnrollment = [
+			$enrollment = [
 				'courseid'=> trim($this->request->getVar('courseid')),
                 'userid'=> trim($this->request->getVar('userid'))
 			];
 
-			if ( !$this->enrollmentmodel->saveCourseEnrollment($courseEnrollment) ) {
+			if ( !$this->enrollmentmodel->saveEnrollment($enrollment) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            $usersForEnroll = $this->enrollmentmodel->getUsersForEnroll($courseEnrollment['courseid']);
+            $enrollments = $this->enrollmentmodel->getEnrollments($enrollment['courseid']);
 
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED, $usersForEnroll), 200);
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED, $enrollments), 200);
             
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -138,14 +76,14 @@ class EnrollmentController extends CourseController
             $enrollment = $this->enrollmentmodel->getEnrollment($id);
 
             if ( empty($enrollment) ) {
-                return $this->respond($this->errorResponse(404,"Course enrollment cannot be found."), 404);
+                return $this->respond($this->errorResponse(404,"Enrollment cannot be found."), 404);
             }
 
             if ( !$this->enrollmentmodel->delete(['id'=>$enrollment['id']]) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            $enrollments = $this->enrollmentmodel->getCourseEnrollments($enrollment['courseid']);
+            $enrollments = $this->enrollmentmodel->getEnrollments($enrollment['courseid']);
 
             return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED_DELETED, $enrollments), 200);
         
@@ -154,42 +92,98 @@ class EnrollmentController extends CourseController
         }
     }
 
-    public function acceptEnrollment()
+    public function accept()
     {
-        $id = trim($this->request->getVar('id'));
 
-        if ( !isset($id) ) {
-            return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
-        }
-        
-        $extenrollment = $this->enrollmentmodel->getEnrollment($id);
+        $this->setValidationRules('accept_coupon');
 
-        if ( empty($extenrollment) ) {
-            return $this->respond($this->errorResponse(404,"Enrollment cannot be found."), 404);
-        }
+        if ( $this->isValid() ) {   
+            
+            $courseid = trim($this->request->getVar('courseid'));
 
-        $paymentInfo = $this->getCoursePaymentInfo($extenrollment['courseid']);
+            if ( !isset($courseid) ) {
+                return $this->respond($this->errorResponse(400,['couponcode'=>'Invalid Request.']), 400);
+            }
 
-        if(!$paymentInfo['paymentrequired']) {
+            if ( empty($this->coursemodel->getCourse($courseid)) ) {
+                return $this->respond($this->errorResponse(400,['couponcode'=>'Invalid Request.']), 400);
+            }
+
+            if ( $this->enrollmentmodel->isEnrolled($courseid, $this->getAuthID()) ) {
+                return $this->respond($this->errorResponse(400,['couponcode'=>'Invalid Request.']), 400);
+            }
+
+            $couponcode = trim($this->request->getVar('couponcode'));
+
+            if (!$this->enrollmentcouponmodel->validateCoupon($courseid, $couponcode)) {
+                return $this->respond($this->errorResponse(400,['couponcode'=>'Invalid Coupon Code.']), 400);
+            }
 
             $enrollment = [
-                'enrolleddate'=> $this->getCurrentDateTimeString(),
-                'status'=> 'A'
-            ];
-    
-            if ( !$this->enrollmentmodel->updateCourseEnrollment($enrollment, $id) ) {
-                return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+				'courseid'=> $courseid,
+                'userid'=> $this->getAuthID()
+			];
+
+			if ( !$this->enrollmentmodel->saveEnrollment($enrollment) ) {
+                return $this->respond($this->errorResponse(400,['couponcode'=>'Internal Server Error.']), 400);
+			}
+
+            $paymentInfo = $this->getCoursePaymentInfo($courseid);
+
+            if($paymentInfo['paymentrequired']) {
+                return $this->respond($this->errorResponse(402,"Payment Required.", ['paymentinfo'=>$paymentInfo]), 402);
             }
-    
-            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED, 
-            ['enrollment'=>$this->enrollmentmodel->getEnrollment($id)]), 200);
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED_UPDATED), 200);
 
         } else {
-            return $this->respond($this->errorResponse(402,"Payment Required.",
-            ['paymentinfo'=>$paymentInfo]), 402);
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
         }
         
     }
+
+    public function updateCoupon()
+	{
+		$this->setValidationRules('update_coupon');
+
+        if ( $this->isValid() ) {   
+
+            $courseid = trim($this->request->getVar('courseid'));
+
+            if ( empty($this->coursemodel->getCourse($courseid)) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+            
+            $extcoupon = $this->enrollmentcouponmodel->getCouponByCourse($courseid);
+        
+            if (empty($extcoupon)) {
+                $newcoupon = [
+                    'courseid'=> $courseid,
+                    'couponcode'=> trim($this->request->getVar('couponcode')),
+                    'maxattempts'=> trim($this->request->getVar('maxattempts')),
+                    'status'=> trim($this->request->getVar('couponstatus')),
+                ];
+
+                $coupon = $this->enrollmentcouponmodel->saveCoupon($newcoupon);
+            } else {
+                $extcoupon['couponcode'] = trim($this->request->getVar('couponcode'));
+                $extcoupon['maxattempts'] = trim($this->request->getVar('maxattempts'));
+                $extcoupon['status'] = trim($this->request->getVar('couponstatus'));
+
+                $coupon = $this->enrollmentcouponmodel->updateCoupon($extcoupon, $extcoupon['id']);
+            }
+
+			
+			if ( empty($coupon) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_ENROLLED_COUPON_UPDATED, $coupon), 200);
+            
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+	}
 
     private function setValidationRules($type='')
     {
@@ -204,13 +198,43 @@ class EnrollmentController extends CourseController
                     'rules'  => 'required'
 				],
             ]);
+        } elseif ( $type == 'update_coupon' ) {
+            $this->validation->setRules([
+                'courseid' => [
+                    'label'  => 'Course ID',
+                    'rules'  => 'required'
+                ],
+                'couponcode' => [
+                    'label'  => 'Coupon Code',
+                    'rules'  => 'required'
+                ],
+                'maxattempts' => [
+                    'label'  => 'Maximum Attempts',
+                    'rules'  => 'required'
+                ],
+                'couponstatus' => [
+                    'label'  => 'Coupon Status',
+                    'rules'  => 'required'
+                ]
+            ]);
+        } elseif ( $type == 'accept_coupon' ) {
+            $this->validation->setRules([
+                'courseid' => [
+                    'label'  => 'Course ID',
+                    'rules'  => 'required'
+                ],
+                'couponcode' => [
+                    'label'  => 'Coupon Code',
+                    'rules'  => 'required'
+                ]
+            ]);
         } elseif ( $type == 'delete' ) {
-                $this->validation->setRules([
-                    'id' => [
-                        'label'  => 'Enrollment ID',
-                        'rules'  => 'required'
-                    ]
-                ]);
+            $this->validation->setRules([
+                'id' => [
+                    'label'  => 'Enrollment ID',
+                    'rules'  => 'required'
+                ]
+            ]);
         } else {
             $this->validation->setRules([]);
         }

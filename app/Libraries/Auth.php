@@ -67,6 +67,12 @@ class Auth {
         return $auth['roleid'];
     }
 
+    public static function getAuthRole()
+    {
+        $auth = static::$authmodel->getAuthRole(self::email());
+        return $auth['rolename'];
+    }
+
     public static function register($data=[])
     {       
         return is_null($data) ? false : ( static::$authmodel->insert($data) ? true : false );

@@ -99,6 +99,7 @@ $routes->post('/courses/save', 'App/Courses/CourseController::save', ['filter' =
 $routes->post('/courses/update', 'App/Courses/CourseController::update', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/update/description', 'App/Courses/CourseController::updateDescription', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/update/instructor', 'App/Courses/CourseController::updateInstructor', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/update/status', 'App/Courses/CourseController::updateStatus', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/delete', 'App/Courses/CourseController::delete', ['filter' => 'authguard:course_delete']);
 
 $routes->post('/courses/sections/get', 'App/Courses/SectionController::get', ['filter' => 'authguard:course_view']);
@@ -117,14 +118,14 @@ $routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController:
 // $routes->post('/courses/sections/lessonduration/save', 'App/Courses/LessonDurationController::save', ['filter' => 'authguard:courses-r']);
 // $routes->post('/courses/sections/lessonduration/update', 'App/Courses/LessonDurationController::update', ['filter' => 'authguard:courses-r']);
 
-$routes->get('/courses/enrollments/', 'App/Courses/EnrollmentController::index', ['filter' => 'authguard:course_enroll_users']);
-$routes->post('/courses/enrollments/course', 'App/Courses/EnrollmentController::getCourseEnrollments', ['filter' => 'authguard:course_enroll_users']);
-$routes->post('/courses/enrollments/course/reset', 'App/Courses/EnrollmentController::resetCourseEnrollments', ['filter' => 'authguard:course_enroll_users']);
-$routes->post('/courses/enrollments/user', 'App/Courses/EnrollmentController::getUserEnrollments', ['filter' => 'authguard:course_enroll_users']);
-$routes->post('/courses/enrollments/get/users', 'App/Courses/EnrollmentController::getUsersForEnroll', ['filter' => 'authguard:course_enroll_users']);
+
+$routes->post('/courses/enrollments/get', 'App/Courses/EnrollmentController::get', ['filter' => 'authguard:course_enroll_users']);
 $routes->post('/courses/enrollments/save', 'App/Courses/EnrollmentController::save', ['filter' => 'authguard:course_enroll_users']);
 $routes->post('/courses/enrollments/delete', 'App/Courses/EnrollmentController::delete', ['filter' => 'authguard:course_enroll_users']);
-$routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::acceptEnrollment', ['filter' => 'authguard:course_enroll']);
+$routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::accept', ['filter' => 'authguard:course_enroll']);
+$routes->post('/courses/enrollments/update/coupon', 'App/Courses/EnrollmentController::updateCoupon', ['filter' => 'authguard:course_enroll_users']);
+
+
 
 $routes->post('/courses/payment/create', 'App/Courses/PaymentController::save', ['filter' => 'authguard:course_enroll']);
 

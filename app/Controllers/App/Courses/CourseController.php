@@ -12,43 +12,34 @@ use App\Models\App\Courses\CourseModel;
 use App\Models\App\Courses\SectionModel;
 use App\Models\App\Courses\LessonModel;
 use App\Models\App\Courses\ReviewModel;
-use App\Models\App\Courses\EnrollmentModel;
 use App\Models\App\Courses\PaymentModel;
-
+use App\Models\App\Courses\EnrollmentModel;
 
 class CourseController extends AuthController
 {
     protected $coursemodel;
     protected $sectionmodel;
     protected $lessonmodel;
-    protected $enrollmentmodel;
     protected $usermodel;
     protected $rolemodel;
     protected $paymentmodel;
+    protected $enrollmentmodel;
 
     public function __construct() {
         parent::__construct();
-        $this->coursemodel = new CourseModel();
+        $this->coursemodel = new CourseModel($this->getAuthRole(), $this->getAuthID());
         $this->sectionmodel = new SectionModel();
         $this->lessonmodel = new LessonModel();
-        $this->enrollmentmodel = new EnrollmentModel();
         $this->usermodel = new UserModel();
         $this->rolemodel = new RoleModel();
         $this->paymentmodel = new PaymentModel();
+        $this->enrollmentmodel = new EnrollmentModel();
         // $reviewmodel = new ReviewModel();
     }
 
     public function index()
     {
-        $rolename = $this->rolemodel->getRoleName($this->getAuthRoleID());
-
-        if ( $rolename  == 'Super Administrator' || $rolename == 'Administrator' ) {
-            return $this->respond($this->successResponse(200, "", $this->coursemodel->getCourses('A')), 200);
-        } elseif ( $rolename  == 'Trainer' ) {
-            return $this->respond($this->successResponse(200, "", $this->coursemodel->getCoursesByTrainer($this->getAuthID(), 'A')), 200);
-        } else {
-            return $this->respond($this->successResponse(200, "", $this->coursemodel->getCoursesByEnrollment($this->getAuthID(), 'A')), 200);
-        }
+        return $this->respond($this->successResponse(200, "", $this->coursemodel->getCourses()), 200);
     }
 
     public function get()
@@ -60,17 +51,7 @@ class CourseController extends AuthController
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $course = [];
-
-            $rolename = $this->rolemodel->getRoleName($this->getAuthRoleID());
-
-            if ( $rolename  == 'Super Administrator' || $rolename == 'Administrator' ) {
-                $course = $this->coursemodel->getCourse($id);
-            } elseif ( $rolename  == 'Trainer' ) {
-                $course = $this->coursemodel->getCourseByTrainer($id, $this->getAuthID());
-            } else {
-                $course = $this->coursemodel->getCourseByEnrollment($id, $this->getAuthID());
-            }
+            $course = $this->coursemodel->getCourse($id);
 
             if ( empty($course) ) {
                 return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
@@ -89,8 +70,14 @@ class CourseController extends AuthController
             $course['sections'] = $courseSections;
             $course['totalSections'] = count($courseSections);
             $course['totalLessons'] = $lessonCount;
-            $course['enrollments'] = $this->enrollmentmodel->getCourseEnrollments($course['id'], 10);
             $course['instructor'] = $this->usermodel->getUserProfile($course['instructorprofile']);
+
+
+            $rolename = $this->rolemodel->getRoleName($this->getAuthRoleID());
+            
+            if ( $rolename  == 'Student' || $rolename  == 'Parent' ) {
+                $course['isEnrolled'] = $this->enrollmentmodel->isEnrolled($id, $this->getAuthID());
+            }
 
             return $this->respond($this->successResponse(200, "", $course), 200);
 
@@ -269,43 +256,65 @@ class CourseController extends AuthController
         }
     }
 
+    public function updateStatus()
+    {
+        $this->setValidationRules('update_status');
+
+        if ( $this->isValid() ) {           
+        
+            $courseid = trim($this->request->getVar('courseid'));
+            $status = trim($this->request->getVar('status'));
+			
+            $extcourse = $this->coursemodel->getCourse($courseid);
+
+            if ( empty($extcourse) ) {
+                return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
+            }
+
+            if ($status=='A') {
+                $incomplete = false;
+
+                foreach ($this->sectionmodel->getSections($courseid) as $section) {
+                    $section['lessons'] = $this->lessonmodel->getLessons($section['id'], 'A');
+                    if (count($section['lessons'])==0) {
+                        $incomplete = true;
+                        break;
+                    }
+                }
+
+                if ($incomplete) {
+                    return $this->respond($this->errorResponse(400,"Course cannot be publish with empty sections."), 400);
+                }
+            }
+
+			if ( !$this->coursemodel->updateCourse([ 'status'=> $status ], $courseid) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_UPDATED, 
+            ['course'=>$this->coursemodel->getCourse($courseid)]), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+    }
+
     public function delete() {
         $this->setValidationRules('delete');
 
         if ( $this->isValid() ) {           
         
-            $id = trim($this->request->getVar('id'));
+            $courseid = trim($this->request->getVar('courseid'));
+			
+            $extcourse = $this->coursemodel->getCourse($courseid);
 
-            $course = $this->coursemodel->getCourse($id);
-
-            if ( empty($course) ) {
+            if ( empty($extcourse) ) {
                 return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
             }
 
-			if ( !$this->coursemodel->delete(['id'=>$course['id']]) ) {
+			if ( !$this->coursemodel->updateCourse([ 'status'=> 'D' ], $courseid) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
-
-            #delete all contents
-            $sections = $this->sectionmodel->getSections($course['id']);
-
-            foreach ($sections as $section) {
-                if ( !$this->lessonmodel->deleteLessonsBySection($section['id']) ) {
-                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-                }
-
-                if ( !$this->sectionmodel->delete(['id'=>$section['id']]) ) {
-                    return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-                }
-            }
-
-            #delete all reviews
-            // $reviews = $reviewmodel->getReviews($course['id']);
-            // foreach ($reviews as $review) {
-            //     if ( !$reviewmodel->delete(['id'=>$review['id']]) ) {
-            //         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-            //     }
-            // }
 
             return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_DELETED), 200);
         
@@ -381,8 +390,7 @@ class CourseController extends AuthController
                     'rules'  => 'required'
                 ],
             ]);
-        } 
-        elseif ( $type == 'update_instructor' ) {
+        } elseif ( $type == 'update_instructor' ) {
             $this->validation->setRules([
                 'courseid' => [
                     'label'  => 'Course ID',
@@ -393,9 +401,20 @@ class CourseController extends AuthController
                     'rules'  => 'required'
                 ]
             ]);
+        } elseif ( $type == 'update_status' ) {
+            $this->validation->setRules([
+                'courseid' => [
+                    'label'  => 'Course ID',
+                    'rules'  => 'required'
+                ],
+                'status' => [
+                    'label'  => 'Course Status',
+                    'rules'  => 'required'
+                ]
+            ]);
         } elseif ( $type == 'delete' ) {
             $this->validation->setRules([
-                'id' => [
+                'courseid' => [
                     'label'  => 'Course ID',
                     'rules'  => 'required'
                 ]
@@ -428,8 +447,7 @@ class CourseController extends AuthController
     {
         try {
 
-            $rolemodel = new RoleModel();
-            $rolename = $rolemodel->getRoleName($this->getAuthRoleID());
+            $rolename = $this->rolemodel->getRoleName($this->getAuthRoleID());
 
             if ($rolename == 'Super Administrator' || $rolename == 'Administrator' || $rolename == 'Trainer') {
                 return false;

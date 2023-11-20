@@ -121,12 +121,17 @@ class LessonController extends CourseController
 
         if ( $this->isValid() ) {           
         
+            $courseid = trim($this->request->getVar('courseid'));
+            $sectionid = trim($this->request->getVar('sectionid'));
+            
 			$lesson = [
-                'sectionid'=> trim($this->request->getVar('sectionid')), 
+                'courseid'=> $courseid, 
+                'sectionid'=> $sectionid, 
                 'lessonname'=> trim($this->request->getVar('lessonname')),
                 'lessonduration'=> trim($this->request->getVar('lessonduration')),
 				'lessondescription'=> trim($this->request->getVar('lessondescription')),
                 'lessonmediaid'=> trim($this->request->getVar('lessonmediaid')),
+                'lessonorder'=> $this->lessonmodel->getLessonOrderID($sectionid),
 			];
 
 			if ( !$this->lessonmodel->saveLesson($lesson) ) {
@@ -207,6 +212,10 @@ class LessonController extends CourseController
     {
         if ( $type == 'save' ) {
             $this->validation->setRules([
+                'courseid' => [
+                    'label'  => 'Course',
+                    'rules'  => 'required'
+                ],
                 'sectionid' => [
                     'label'  => 'Section',
                     'rules'  => 'required'
