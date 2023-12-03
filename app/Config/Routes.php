@@ -102,11 +102,13 @@ $routes->post('/courses/update/instructor', 'App/Courses/CourseController::updat
 $routes->post('/courses/update/status', 'App/Courses/CourseController::updateStatus', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/delete', 'App/Courses/CourseController::delete', ['filter' => 'authguard:course_delete']);
 
+$routes->post('/courses/sections', 'App/Courses/SectionController::index', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/get', 'App/Courses/SectionController::get', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/save', 'App/Courses/SectionController::save', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/update', 'App/Courses/SectionController::update', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/delete', 'App/Courses/SectionController::delete', ['filter' => 'authguard:course_update']);
 
+$routes->post('/courses/sections/lessons', 'App/Courses/LessonController::index', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/lessons/get', 'App/Courses/LessonController::get', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/lessons/get/next', 'App/Courses/LessonController::getNext', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/lessons/get/previous', 'App/Courses/LessonController::getPrevious', ['filter' => 'authguard:course_view']);

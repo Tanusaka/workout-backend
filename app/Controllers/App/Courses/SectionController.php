@@ -5,17 +5,37 @@
  */
 namespace App\Controllers\App\Courses;
 
-use App\Controllers\Core\AuthController;
-use App\Models\App\Courses\SectionModel;
-use App\Models\App\Courses\LessonModel;
+use App\Controllers\App\Courses\CourseController;
 
-class SectionController extends AuthController
+class SectionController extends CourseController
 {
-    protected $sectionmodel;
-
     public function __construct() {
         parent::__construct();
-        $this->sectionmodel = new SectionModel();
+    }
+
+    public function index()
+    {
+        try {
+            $id = $this->request->getVar('id');
+
+            if ( !isset($id) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $course = $this->coursemodel->getCourse($id);
+
+            if ( empty($course) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $sections = $this->sectionmodel->getSections($id);
+
+            return $this->respond($this->successResponse(200, "", $sections), 200);
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
     }
 
     public function get()
@@ -29,7 +49,7 @@ class SectionController extends AuthController
 
             $section = $this->sectionmodel->getSection($id);
 
-            if ( is_null($section) ) {
+            if ( empty($section) ) {
                 return $this->respond($this->errorResponse(404,"Section cannot be found."), 404);
             }
 
@@ -111,9 +131,7 @@ class SectionController extends AuthController
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 
-            $lessonmodel = new LessonModel();
-
-            if ( !$lessonmodel->deleteLessonsBySection($section['id']) ) {
+            if ( !$this->lessonmodel->deleteLessonsBySection($section['id']) ) {
 				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
 			}
 

@@ -6,19 +6,36 @@
 namespace App\Controllers\App\Courses;
 
 use App\Controllers\App\Courses\CourseController;
-use App\Models\App\Courses\LessonModel;
-use App\Models\App\Courses\SectionModel;
-use App\Models\Core\RoleModel;
 
 class LessonController extends CourseController
 {
-    protected $lessonmodel;
-    protected $sectionmodel;
-
     public function __construct() {
         parent::__construct();
-        $this->lessonmodel = new LessonModel();
-        $this->sectionmodel = new SectionModel();
+    }
+
+    public function index()
+    {
+        try {
+            $id = $this->request->getVar('id');
+
+            if ( !isset($id) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $section = $this->sectionmodel->getSection($id);
+
+            if ( empty($section) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $lessons = $this->lessonmodel->getLessons($id, 'A');
+
+            return $this->respond($this->successResponse(200, "", $lessons), 200);
+
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
     }
 
     public function get()
@@ -32,7 +49,7 @@ class LessonController extends CourseController
 
             $lesson = $this->lessonmodel->getLesson($id);
 
-            if ( is_null($lesson) ) {
+            if ( empty($lesson) ) {
                 return $this->respond($this->errorResponse(404,"Lesson cannot be found."), 404);
             }
 

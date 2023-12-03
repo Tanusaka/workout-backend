@@ -6,18 +6,11 @@
 namespace App\Controllers\App\Courses;
 
 use App\Controllers\App\Courses\CourseController;
-use App\Models\App\Courses\EnrollmentModel;
-use App\Models\App\Courses\EnrollmentcouponModel;
 
 class EnrollmentController extends CourseController
 {
-    protected $enrollmentmodel;
-    protected $enrollmentcouponmodel;
-
     public function __construct() {
         parent::__construct();
-        $this->enrollmentmodel = new EnrollmentModel();
-        $this->enrollmentcouponmodel = new EnrollmentcouponModel();
     }
 
     public function get()

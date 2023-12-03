@@ -14,6 +14,7 @@ use App\Models\App\Courses\LessonModel;
 use App\Models\App\Courses\ReviewModel;
 use App\Models\App\Courses\PaymentModel;
 use App\Models\App\Courses\EnrollmentModel;
+use App\Models\App\Courses\EnrollmentcouponModel;
 
 class CourseController extends AuthController
 {
@@ -24,6 +25,7 @@ class CourseController extends AuthController
     protected $rolemodel;
     protected $paymentmodel;
     protected $enrollmentmodel;
+    protected $enrollmentcouponmodel;
 
     public function __construct() {
         parent::__construct();
@@ -34,6 +36,7 @@ class CourseController extends AuthController
         $this->rolemodel = new RoleModel();
         $this->paymentmodel = new PaymentModel();
         $this->enrollmentmodel = new EnrollmentModel();
+        $this->enrollmentcouponmodel = new EnrollmentcouponModel();
         // $reviewmodel = new ReviewModel();
     }
 
