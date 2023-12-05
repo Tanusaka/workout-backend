@@ -74,15 +74,21 @@ class LessonController extends CourseController
     {
         try {
             $courseid = $this->request->getVar('courseid');
-            $currentid = $this->request->getVar('currentid');
+            $currentLessonID = $this->request->getVar('currentid');
 
-            if ( !isset($courseid) || !isset($currentid)) {
+            if ( !isset($currentLessonID)) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $lesson = $this->lessonmodel->getPreviousLesson($courseid, $currentid);
+            $currentLesson = $this->lessonmodel->getLesson($currentLessonID);
 
-            if ( is_null($lesson) ) {
+            if ( empty($currentLesson) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $lesson = $this->lessonmodel->getPreviousLesson($courseid, $currentLesson['lessonorder']-1);
+
+            if ( empty($lesson) ) {
                 return $this->respond($this->errorResponse(404,"There is no previous lesson."), 404);
             }
 
@@ -105,15 +111,21 @@ class LessonController extends CourseController
     {
         try {
             $courseid = $this->request->getVar('courseid');
-            $currentid = $this->request->getVar('currentid');
+            $currentLessonID = $this->request->getVar('currentid');
 
-            if ( !isset($courseid) || !isset($currentid)) {
+            if ( !isset($currentLessonID)) {
                 return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
             }
 
-            $lesson = $this->lessonmodel->getNextLesson($courseid, $currentid);
+            $currentLesson = $this->lessonmodel->getLesson($currentLessonID);
 
-            if ( is_null($lesson) ) {
+            if ( empty($currentLesson) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
+
+            $lesson = $this->lessonmodel->getNextLesson($courseid, $currentLesson['lessonorder']+1);
+
+            if ( empty($lesson) ) {
                 return $this->respond($this->errorResponse(404,"There is no next lesson."), 404);
             }
 
@@ -148,7 +160,7 @@ class LessonController extends CourseController
                 'lessonduration'=> trim($this->request->getVar('lessonduration')),
 				'lessondescription'=> trim($this->request->getVar('lessondescription')),
                 'lessonmediaid'=> trim($this->request->getVar('lessonmediaid')),
-                'lessonorder'=> $this->lessonmodel->getLessonOrderID($sectionid),
+                'lessonorder'=> 0,
 			];
 
 			if ( !$this->lessonmodel->saveLesson($lesson) ) {
@@ -194,6 +206,29 @@ class LessonController extends CourseController
 
             return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_UPDATED,
             ['lesson'=>$this->lessonmodel->getLesson($lessonid)]), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+	}
+
+    public function updateOrder()
+	{
+		$this->setValidationRules('update_order');
+
+        if ( $this->isValid() ) {           
+        
+            $orderList = $this->request->getVar('orderList');
+
+            if ( empty($orderList) ) {
+                return $this->respond($this->errorResponse(404,"Invalid Order List."), 400);
+            }
+
+            foreach ($orderList as $index => $lessonid) {
+                $this->lessonmodel->updateLesson( ['lessonorder' => $index], $lessonid);
+            }
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_LESSON_UPDATED), 200);
         
 		} else {
             return $this->respond($this->errorResponse(400,$this->errors), 400);
@@ -272,6 +307,13 @@ class LessonController extends CourseController
                     'label'  => 'Lesson Description',
                     'rules'  => 'required'
                 ],
+            ]);
+        } elseif ( $type == 'update_order' ) {
+            $this->validation->setRules([
+                'orderList' => [
+                    'label'  => 'Order List',
+                    'rules'  => 'required'
+                ]
             ]);
         } elseif ( $type == 'delete' ) {
             $this->validation->setRules([

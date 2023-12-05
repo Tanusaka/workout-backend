@@ -54,6 +54,8 @@ class LessonModel extends Model
         if ($status!='') {
           $lessons->where('course_lessons.status', $status);
         }
+
+        $lessons->orderBy('lessonorder', 'ASC');
   
         return $lessons->get()->getResultArray();
   
@@ -80,54 +82,40 @@ class LessonModel extends Model
       } 
   }
 
-  public function getNextLesson($courseid=0, $current=0)
+  public function getNextLesson($courseid=0, $nextLessonIndex=0)
   {
       try {
-
         $lesson = 
-        $this->db->table('course_lessons')->select('course_lessons.id, courses.id AS courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
         _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
-        ->join('course_sections', 'course_sections.id = course_lessons.sectionid')
-        ->join('courses', 'courses.id = course_sections.courseid')
-        ->where('courses.id', $courseid)
-        ->where('course_lessons.id >', $current)
-        ->orderBy('course_lessons.sectionid ASC, course_lessons.id ASC')
-        ->limit(1);
+        ->where('course_lessons.courseid', $courseid)
+        ->where('course_lessons.lessonorder', $nextLessonIndex);
 
-        $next = $lesson->get()->getRowArray();
+        return $lesson->get()->getRowArray();
 
-        // print_r('<pre>');print_r($this->getLastQuery()->getQuery());print_r('</pre>');die;
-  
-        return $next;
-  
       } catch (\Exception $e) {
         throw new \Exception($e->getMessage());
       } 
   }
 
-  public function getPreviousLesson($courseid=0, $current=0)
+  public function getPreviousLesson($courseid=0, $previousLessonIndex=0)
   {
       try {
-
         $lesson = 
-        $this->db->table('course_lessons')->select('course_lessons.id, courses.id AS courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
+        $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
         _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
-        ->join('course_sections', 'course_sections.id = course_lessons.sectionid')
-        ->join('courses', 'courses.id = course_sections.courseid')
-        ->where('courses.id', $courseid)
-        ->where('course_lessons.id <', $current)
-        ->orderBy('course_lessons.id', 'DESC')
-        ->limit(1);
-  
+        ->where('course_lessons.courseid', $courseid)
+        ->where('course_lessons.lessonorder', $previousLessonIndex);
+
         return $lesson->get()->getRowArray();
-  
+
       } catch (\Exception $e) {
         throw new \Exception($e->getMessage());
-      } 
+      }  
   }
 
   public function getLessonOrderID($sectionid=0) {
@@ -154,6 +142,7 @@ class LessonModel extends Model
     if ( isset($data['lessonduration']) ) { $this->set('lessonduration', $data['lessonduration']); }
     if ( isset($data['lessondescription']) ) { $this->set('lessondescription', $data['lessondescription']); }
     if ( isset($data['lessonmediaid']) ) { $this->set('lessonmediaid', $data['lessonmediaid']); }
+    if ( isset($data['lessonorder']) ) { $this->set('lessonorder', $data['lessonorder']); }
     if ( isset($data['status']) ) { $this->set('status', $data['status']); }
 
     return $this->where('id', $id)->update();

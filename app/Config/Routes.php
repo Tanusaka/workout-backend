@@ -114,6 +114,7 @@ $routes->post('/courses/sections/lessons/get/next', 'App/Courses/LessonControlle
 $routes->post('/courses/sections/lessons/get/previous', 'App/Courses/LessonController::getPrevious', ['filter' => 'authguard:course_view']);
 $routes->post('/courses/sections/lessons/save', 'App/Courses/LessonController::save', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/lessons/update', 'App/Courses/LessonController::update', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/sections/lessons/update/order', 'App/Courses/LessonController::updateOrder', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/sections/lessons/delete', 'App/Courses/LessonController::delete', ['filter' => 'authguard:course_update']);
 
 // $routes->post('/courses/sections/lessonduration/get', 'App/Courses/LessonDurationController::get', ['filter' => 'authguard:courses-r']);
