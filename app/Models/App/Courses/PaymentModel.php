@@ -32,6 +32,18 @@ class PaymentModel extends Model
 	// protected $beforeDelete         = [];
 	// protected $afterDelete          = [];
 
+	public function getPayments($courseid=0)
+	{
+		try {
+
+			$payments = $this->select()->where('courseid', $courseid)->orderBy('createdat', 'DESC')->get()->getResultArray();
+
+			return $payments;
+
+		} catch (\Exception $e) {
+		throw new \Exception($e->getMessage());
+		}
+	}
 
 	public function getLastPayment($userid=0, $courseid=0)
 	{

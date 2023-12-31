@@ -259,6 +259,40 @@ class CourseController extends AuthController
         }
     }
 
+    public function updatePaymentInfo()
+    {
+        $this->setValidationRules('update_paymentinfo');
+
+        if ( $this->isValid() ) {           
+        
+            $courseid = trim($this->request->getVar('courseid'));
+			
+            $extcourse = $this->coursemodel->getCourse($courseid);
+
+            if ( empty($extcourse) ) {
+                return $this->respond($this->errorResponse(404,"Course cannot be found."), 404);
+            }
+
+            $course = [
+                'priceplan'=> trim($this->request->getVar('priceplan')),
+                'price'=> trim($this->request->getVar('price')),
+                'currencycode'=> trim($this->request->getVar('currencycode')),
+			];
+
+			if ( !$this->coursemodel->updateCourse($course, $courseid) ) {
+				return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+			}
+
+            $course = $this->coursemodel->getCourse($courseid);
+
+            return $this->respond($this->successResponse(200, API_MSG_SUCCESS_COURSE_UPDATED, 
+            ['course'=>$course]), 200);
+        
+		} else {
+            return $this->respond($this->errorResponse(400,$this->errors), 400);
+        }
+    }
+
     public function updateStatus()
     {
         $this->setValidationRules('update_status');
@@ -403,6 +437,25 @@ class CourseController extends AuthController
                     'label'  => 'Instructor Profile',
                     'rules'  => 'required'
                 ]
+            ]);
+        } elseif ( $type == 'update_paymentinfo' ) {
+            $this->validation->setRules([
+                'courseid' => [
+                    'label'  => 'Course ID',
+                    'rules'  => 'required'
+                ],
+                'priceplan' => [
+                    'label'  => 'Price Plan',
+                    'rules'  => 'required'
+                ],
+                'price' => [
+                    'label'  => 'Price',
+                    'rules'  => 'required|numeric|greater_than[0]'
+                ],
+                'currencycode' => [
+                    'label'  => 'Currency Code',
+                    'rules'  => 'required'
+                ],
             ]);
         } elseif ( $type == 'update_status' ) {
             $this->validation->setRules([

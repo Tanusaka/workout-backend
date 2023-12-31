@@ -5,72 +5,55 @@
  */
 namespace App\Controllers\App\Courses;
 
-use App\Controllers\Core\AuthController;
-use App\Models\App\Courses\CourseModel;
-use App\Models\App\Courses\PaymentModel;
+use App\Controllers\App\Courses\CourseController;
 
-class PaymentController extends AuthController
+class PaymentController extends CourseController
 {
-    protected $paymentmodel;
-
     public function __construct() {
         parent::__construct();
-        $this->paymentmodel = new PaymentModel();
     }
 
-    // public function index()
-    // {
-    //     $user_id = $this->getAuthID();
-    //     return $this->respond($this->successResponse(200, "", $this->paymentmodel->getCoursesPaymentsByUser($user_id), 200));
-    // }
+    public function get()
+    {
+        try {
 
-    // public function get()
-    // {
-    //     try {
-    //         $user_id = $this->getAuthID();
-    //         $course_id = $this->request->getVar('courseid');
+            $course_id = $this->request->getVar('courseid');
 
-    //         if ( !isset($course_id) ) {
-    //             return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
-    //         }
+            if ( !isset($course_id) ) {
+                return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
+            }
 
-    //         $coursePayment = $this->paymentmodel->getCoursePaymentsByUser($user_id, $course_id);
+            $course = $this->coursemodel->getCourse($course_id);
 
-    //         if ( is_null($coursePayment) ) {
-    //             return $this->respond($this->errorResponse(404,"Course Payment cannot be found."), 404);
-    //         }
+            $payments['payment'] = [
+                'courseid' => $course['id'],
+                'priceplan' => $course['priceplan'],
+                'amount' => $course['price'],
+                'currency' => $course['currencycode'],
+            ];
 
-    //         return $this->respond($this->successResponse(200, "", $coursePayment), 200);
+            $payments['payments'] = $this->paymentmodel->getPayments($course_id);
 
-    //     } catch (\Exception $e) {
-    //         log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-    //         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-    //     }
-    // }
+            return $this->respond($this->successResponse(200, "", $payments), 200);
 
-    // public function getLastCoursePaymentByUser()
-    // {
-    //     try {
-    //         $user_id = $this->getAuthID();
-    //         $course_id = $this->request->getVar('courseid');
+        } catch (\Exception $e) {
+            log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+            return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
+        }
+    }
 
-    //         if ( !isset($course_id) ) {
-    //             return $this->respond($this->errorResponse(400,"Invalid Request."), 400);
-    //         }
+    public function getPaymentInfo() {
+        
+        $courseid = $this->request->getVar('courseid');
+    
+        if ( !isset($courseid) ) {
+            return $this->respond($this->errorResponse(400, "Invalid Request."), 400);
+        }
 
-    //         $coursePayment = $this->paymentmodel->getLastCoursePaymentByUser($user_id, $course_id);
+        $paymentInfo = $this->getCoursePaymentInfo($courseid);
+        return $this->respond($this->successResponse(200, "", $paymentInfo), 200);
 
-    //         if ( is_null($coursePayment) ) {
-    //             return $this->respond($this->errorResponse(404,"No Course Payment found."), 404);
-    //         }
-
-    //         return $this->respond($this->successResponse(200, "", $coursePayment), 200);
-
-    //     } catch (\Exception $e) {
-    //         log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-    //         return $this->respond($this->errorResponse(500,"Internal Server Error."), 500);
-    //     }
-    // }
+    }
 
     public function save()
 	{

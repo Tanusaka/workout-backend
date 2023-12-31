@@ -99,6 +99,7 @@ $routes->post('/courses/save', 'App/Courses/CourseController::save', ['filter' =
 $routes->post('/courses/update', 'App/Courses/CourseController::update', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/update/description', 'App/Courses/CourseController::updateDescription', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/update/instructor', 'App/Courses/CourseController::updateInstructor', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/update/paymentinfo', 'App/Courses/CourseController::updatePaymentInfo', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/update/status', 'App/Courses/CourseController::updateStatus', ['filter' => 'authguard:course_update']);
 $routes->post('/courses/delete', 'App/Courses/CourseController::delete', ['filter' => 'authguard:course_delete']);
 
@@ -128,8 +129,8 @@ $routes->post('/courses/enrollments/delete', 'App/Courses/EnrollmentController::
 $routes->post('/courses/enrollments/accept', 'App/Courses/EnrollmentController::accept', ['filter' => 'authguard:course_enroll']);
 $routes->post('/courses/enrollments/update/coupon', 'App/Courses/EnrollmentController::updateCoupon', ['filter' => 'authguard:course_enroll_users']);
 
-
-
+$routes->post('/courses/payment/get', 'App/Courses/PaymentController::get', ['filter' => 'authguard:course_update']);
+$routes->post('/courses/payment/info', 'App/Courses/PaymentController::getPaymentInfo', ['filter' => 'authguard:course_enroll']);
 $routes->post('/courses/payment/create', 'App/Courses/PaymentController::save', ['filter' => 'authguard:course_enroll']);
 
 // $routes->get('/courses/payments/', 'App/Courses/CoursePaymentController::index', ['filter' => 'authguard:courses-r']);
