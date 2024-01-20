@@ -48,7 +48,7 @@ class UserModel extends Model
     {
 		try {
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, _users.email, rolename, firstname, lastname, _files.type, CONCAT(_files.path, _files.name) AS profileimage,
+			$this->db->table('_users')->select('_users.id, _users.tenantid, _users.email, rolename, firstname, lastname, _files.type, _files.path AS profileimage,
 			_users.lastinat, _users.status, _users.islogged AS active')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
@@ -73,7 +73,7 @@ class UserModel extends Model
     {
 		try {
 			$users = 
-			$this->db->table('_users')->select('_users.id, _users.tenantid, email, roleid, rolename, firstname, lastname, dob, gender, _files.type, CONCAT(_files.path, _files.name) AS profileimage,
+			$this->db->table('_users')->select('_users.id, _users.tenantid, email, roleid, rolename, firstname, lastname, dob, gender, _files.type, _files.path AS profileimage,
 			description, mobile, address1, address2, city, country, lastinat, _users.status, _users.islogged AS active')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
@@ -92,7 +92,7 @@ class UserModel extends Model
 		try {
 			
 			$trainers = 
-			$this->db->table('_users')->select('_users.id, rolename, firstname, lastname, email, _files.type, CONCAT(_files.path, _files.name) AS profileimage, description, _users.islogged AS active')
+			$this->db->table('_users')->select('_users.id, rolename, firstname, lastname, email, _files.type, _files.path AS profileimage, description, _users.islogged AS active')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->where('_users.tenantid', 1)
@@ -114,7 +114,7 @@ class UserModel extends Model
 		try {
 			
 			$profile = 
-			$this->db->table('_users')->select('_users.id, rolename, firstname, lastname, email, _files.type, CONCAT(_files.path, _files.name) AS profileimage, description, _users.islogged AS active')
+			$this->db->table('_users')->select('_users.id, rolename, firstname, lastname, email, _files.type, _files.path AS profileimage, description, _users.islogged AS active')
 			->join('_roles', '_roles.id = _users.roleid')
 			->join('_files', '_files.id = _users.profileimageid', 'left')
 			->where('_users.id', $id)

@@ -38,7 +38,7 @@ class ChatModel extends Model
         try {
 
             $chats = 
-            $this->db->table('chats')->select('chats.id, chats.type, chat_info.name, chat_info.about, CONCAT(_files.path, _files.name) AS chatimage,
+            $this->db->table('chats')->select('chats.id, chats.type, chat_info.name, chat_info.about, _files.path AS chatimage,
             chats.status, chats.createdat, chats.createdby, chats.updatedat, chats.updatedby')
             ->join('chat_members', 'chat_members.chatid = chats.id', 'left')
             ->join('chat_info', 'chat_info.chatid = chats.id', 'left')
@@ -63,7 +63,7 @@ class ChatModel extends Model
         try {
 
             $chat = 
-            $this->db->table('chats')->select('chats.id, chats.type, chat_info.name, chat_info.about, CONCAT(_files.path, _files.name) AS chatimage,
+            $this->db->table('chats')->select('chats.id, chats.type, chat_info.name, chat_info.about, _files.path AS chatimage,
             chats.status, chats.createdat, chats.createdby, chats.updatedat, chats.updatedby')
             ->join('chat_info', 'chat_info.chatid = chats.id', 'left')
             ->join('_files', '_files.id = chat_info.chatimageid', 'left')

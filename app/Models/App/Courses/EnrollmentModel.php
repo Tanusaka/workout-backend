@@ -48,7 +48,7 @@ class EnrollmentModel extends Model
 
       $users = 
       $this->db->table('_users')->select('_users.id, _users.tenantid, rolename, firstname, lastname, _files.type, 
-      CONCAT(_files.path, _files.name) AS profileimage, _users.status, 
+      _files.path AS profileimage, _users.status, 
       course_enrollments.id as enrolledid, course_enrollments.enrolleddate as enrolleddate, IF(course_enrollments.userid IS NULL, "0", "1") AS enrolled')
       ->join('_roles', '_roles.id = _users.roleid')
       ->join('_files', '_files.id = _users.profileimageid', 'left')

@@ -33,7 +33,7 @@ class ChatmessageModel extends Model
         try {
 
             $select = 'chat_messages.id, chat_messages.type, chat_messages.content, 
-            chat_messages.createdat, _users.firstname AS sendername, CONCAT(_files.path, _files.name) AS senderimage, 
+            chat_messages.createdat, _users.firstname AS sendername, _files.path AS senderimage, 
             IF(chat_messages.createdby='.$currentuser.', "1", "0") AS sentbyme';
 
             $chatmessages = 

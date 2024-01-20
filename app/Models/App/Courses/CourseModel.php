@@ -63,7 +63,7 @@ class CourseModel extends Model
 
       $courses = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, _files.path AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')->where($where);
@@ -89,7 +89,7 @@ class CourseModel extends Model
 
       $course = 
       $this->db->table('courses')->select('courses.id, courses.tenantid, courses.coursename, courses.courseintro, 
-      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, CONCAT(_files.path, _files.name) AS courseimage, 
+      courses.coursedescription, courses.courselevel, courses.coursetype, _files.type, _files.path AS courseimage, 
       courses.instructorprofile, courses.priceplan, courses.price, courses.currencycode, courses.status,
       courses.createdat, courses.createdby, courses.updatedat, courses.updatedby')
       ->join('_files', '_files.id = courses.courseimageid', 'left')->where($where);

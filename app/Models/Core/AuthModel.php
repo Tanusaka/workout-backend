@@ -217,7 +217,7 @@ class AuthModel extends Model
   public function getAuthUser($email)  {
     try {
 			$users =        
-			$this->db->table('_users')->select('_users.id, _users.tenantid, email, roleid, rolename, firstname, lastname, CONCAT(_files.path, _files.name) AS profileimage')
+			$this->db->table('_users')->select('_users.id, _users.tenantid, email, roleid, rolename, firstname, lastname, _files.path AS profileimage')
 			->join('_roles', '_roles.id = _users.roleid')
       ->join('_files', '_files.id = _users.profileimageid', 'left')
 			->where('_users.tenantid', 1)

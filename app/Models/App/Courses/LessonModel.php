@@ -46,7 +46,7 @@ class LessonModel extends Model
 
         $lessons = 
         $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
-        _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        _files.type, _files.path AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
         ->where('course_lessons.sectionid', $sectionid);
@@ -70,7 +70,7 @@ class LessonModel extends Model
 
         $lesson = 
         $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
-        _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        _files.type, _files.path AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
         ->where('course_lessons.id', $id);
@@ -87,7 +87,7 @@ class LessonModel extends Model
       try {
         $lesson = 
         $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
-        _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        _files.type, _files.path AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
         ->where('course_lessons.courseid', $courseid)
@@ -105,7 +105,7 @@ class LessonModel extends Model
       try {
         $lesson = 
         $this->db->table('course_lessons')->select('course_lessons.id, course_lessons.courseid, course_lessons.sectionid, course_lessons.lessonname, course_lessons.lessonduration, course_lessons.lessondescription, 
-        _files.type, CONCAT(_files.path, _files.name) AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
+        _files.type, _files.path AS lessonmedia, course_lessons.lessonorder, course_lessons.status,
         course_lessons.createdat, course_lessons.createdby, course_lessons.updatedat, course_lessons.updatedby')
         ->join('_files', '_files.id = course_lessons.lessonmediaid', 'left')
         ->where('course_lessons.courseid', $courseid)

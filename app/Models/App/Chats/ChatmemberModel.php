@@ -39,7 +39,7 @@ class ChatmemberModel extends Model
 
             $chatmembers = 
             $this->db->table('chat_members')->select('chat_members.id, chat_members.role, _users.firstname, _users.lastname, 
-            CONCAT(_files.path, _files.name) AS profileimage, _users.islogged AS active, chat_members.status, chat_members.createdat')
+            _files.path AS profileimage, _users.islogged AS active, chat_members.status, chat_members.createdat')
             ->join('_users', '_users.id = chat_members.userid')
             ->join('_files', '_files.id = _users.profileimageid', 'left')
             ->where('chat_members.chatid', $chatid);
